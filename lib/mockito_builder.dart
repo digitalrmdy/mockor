@@ -1,7 +1,8 @@
 library mockito_builder;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+import 'package:build/build.dart';
+import 'package:mockito_builder/src/generators/mockito_generator.dart';
+import 'package:source_gen/source_gen.dart';
+
+Builder mockitoBuilder(BuilderOptions builderOptions) =>
+    SharedPartBuilder(const [MockitoGenerator()], 'mockito_builder');
