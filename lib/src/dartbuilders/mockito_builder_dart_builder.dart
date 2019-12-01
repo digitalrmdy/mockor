@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:mockito_builder/src/models/models.dart';
+import 'package:mockito_builder_annotations/mockito_builder_annotations.dart';
 
 class MockitoDartBuilder {
   String buildDartFile(MockitoConfig mockitoConfig) {
@@ -18,6 +19,10 @@ class MockitoDartBuilder {
       ..implements.add(refer(mockitoDef.type)));
   }
 
+  String createUnimplementedErrorMessage() {
+    return '\'Error, you forgot to specify \"\$T\" in the $GenerateMocker annotation\'';
+  }
+
   Block createSwitchStatement(MockitoConfig mockitoConfig) {
     final list = <Code>[];
     list.add(Code("switch(T) {"));
@@ -25,7 +30,8 @@ class MockitoDartBuilder {
       list.add(Code("case ${mockDef.type}:"));
       list.add(Code("return ${mockDef.targetClassName}();"));
     });
-    list.add(Code("default: throw UnimplementedError();"));
+    list.add(Code(
+        "default: throw UnimplementedError(${createUnimplementedErrorMessage()});"));
     list.add(Code("}"));
     return Block.of(list);
   }

@@ -1,7 +1,6 @@
 library mockito_builder_annotations;
 
-class Mocker {
-  const Mocker();
+class GenerateMocker {
+  final List<Type> types;
+  const GenerateMocker(this.types);
 }
-
-const mocker = Mocker();
