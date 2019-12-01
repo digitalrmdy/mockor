@@ -1,10 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-
+import 'test_utils/mocker.dart';
 import 'usecase/example_use_case.dart';
-import 'package:mockito_builder_annotations/mockito_builder_annotations.dart';
-
-part 'mockito_builder_test.g.dart';
 
 void main() {
   ExampleUseCase exampleUseCase;
@@ -26,6 +23,3 @@ void main() {
     } on Exception {}
   });
 }
-
-@mocker
-T mock<T>() => _$mock<T>();

@@ -1,10 +1,9 @@
 class MockDef {
   final String type;
-  final String variableName;
 
-  const MockDef({this.type, this.variableName});
+  const MockDef({this.type});
 
-  String get targetClassName => "_Mock$type";
+  String get targetClassName => "_\$Mock$type";
 
   @override
   bool operator ==(Object other) =>
