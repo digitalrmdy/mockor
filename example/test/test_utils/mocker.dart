@@ -7,7 +7,3 @@ part 'mocker.g.dart';
 
 @GenerateMocker([ExampleUseCase, ExampleUseCase2])
 T mock<T>() => _$mock<T>();
-
-bool isBad() {
-  return false;
-}
