@@ -4,11 +4,60 @@ generate flutter mockito mocks.
 
 ## Getting Started
 
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
+### Add the dependency
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+Add the mockito code generator to your dev dependencies.
+
+```yaml
+dev_dependencies:
+  mockito_builder:
+    git:
+      url: https://github.com/digitalrmdy/mockito-builder.git
+
+```
+
+### Add a `mocker.dart` file in your test folder with a `@GenerateMocker` method.
+
+
+```dart
+
+import 'package:mockito_builder_annotations/mockito_builder_annotations.dart';
+import 'domain/navigation/navigation_service.dart';
+import 'domain/usecases/register_user_use_case.dart';
+///make sure to import the mockito package because the generated code depends on it.
+import 'package:mockito/mockito.dart';
+
+part 'mocker.g.dart';
+
+///this will generate a `mocker.g.dart` file.
+///specify the classes that should be mocked. 
+@GenerateMocker([RegisterUserUseCase, NavigationService])
+///define a method without any paramters and one type paramter. 
+///an implementation of the method will be generated with a _$ prefix.
+T mock<T>() => _$mock<T>();
+```
+
+### To use the generated mocks, simple import and call the defined mock function
+
+```dart
+import '../../mocker.dart';
+import 'domain/navigation/navigation_service.dart';
+import 'domain/usecases/register_user_use_case.dart';
+
+void main() {
+  RegisterUserUseCase registerUserUseCase;
+  NavigationService navigationService;
+  RegisterViewModel viewModel;
+
+  setUp(() {
+    registerUserUseCase = mock();
+    navigationService = mock();
+    viewModel = RegisterViewModelImpl(registerUserUseCase, navigationService);
+  });
+  
+  ...
+  
+}
+```
+
+for more info check out the example module.
