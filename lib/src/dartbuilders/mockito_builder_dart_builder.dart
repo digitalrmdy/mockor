@@ -19,8 +19,11 @@ class MockitoDartBuilder {
       ..implements.add(refer(mockitoDef.type)));
   }
 
-  String createUnimplementedErrorMessage() {
-    return '\'Error, you forgot to specify \"\$T\" in the $GenerateMocker annotation\'';
+  String createUnimplementedErrorMessage(MockitoConfig mockitoConfig) {
+    final mockerName = mockitoConfig.mockerName;
+    return '''Error, a mock class for \'\$T\' has not been generated yet.
+Navigate to the \'$mockerName\' method and add the type to the types list in the \'$GenerateMocker\' annotation.
+Finally run the build command: \'flutter packages pub run build_runner build\'.''';
   }
 
   Block createSwitchStatement(MockitoConfig mockitoConfig) {
@@ -31,7 +34,7 @@ class MockitoDartBuilder {
       list.add(Code("return ${mockDef.targetClassName}();"));
     });
     list.add(Code(
-        "default: throw UnimplementedError(${createUnimplementedErrorMessage()});"));
+        "default: throw UnimplementedError(\'\'\'${createUnimplementedErrorMessage(mockitoConfig)}\'\'\');"));
     list.add(Code("}"));
     return Block.of(list);
   }

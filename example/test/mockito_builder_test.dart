@@ -3,9 +3,12 @@ import 'package:mockito/mockito.dart';
 import 'test_utils/mocker.dart';
 import 'usecase/example_use_case.dart';
 
+class ExampleUseCase3 {}
+
 void main() {
   ExampleUseCase exampleUseCase;
   ExampleUseCase2 exampleUseCase2;
+
   setUp(() {
     exampleUseCase = mock();
     exampleUseCase2 = mock();
@@ -21,5 +24,17 @@ void main() {
       exampleUseCase2.example2();
       fail('expected exception');
     } on Exception {}
+  });
+
+  test('throw unimplemented error when mock class not generated', () {
+    try {
+      // ignore: unused_local_variable
+      ExampleUseCase3 exampleUseCase3 = mock();
+      fail("expected an exception");
+    } on UnimplementedError catch (e) {
+      print(e.message);
+    } catch (e) {
+      fail("expected 'UnimplementedError'");
+    }
   });
 }
