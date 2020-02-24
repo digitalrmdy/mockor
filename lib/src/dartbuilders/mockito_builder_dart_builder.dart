@@ -31,7 +31,11 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
     list.add(Code("switch(T) {"));
     mockitoConfig.mockDefs.forEach((mockDef) {
       list.add(Code("case ${mockDef.type}:"));
-      list.add(Code("return ${mockDef.targetClassName}();"));
+      list.add(Code("final mock = ${mockDef.targetClassName}();"));
+      list.add(Code("if (enableThrowOnMissingStub) {"));
+      list.add(Code("throwOnMissingStub(mock);"));
+      list.add(Code("}"));
+      list.add(Code("return mock;"));
     });
     list.add(Code(
         "default: throw UnimplementedError(\'\'\'${createUnimplementedErrorMessage(mockitoConfig)}\'\'\');"));
@@ -41,10 +45,18 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
 
   Method buildMockerMethod(MockitoConfig mockitoConfig) {
     final name = mockitoConfig.mockerName;
+    var throwOnMissingStubBuilder = ParameterBuilder();
+    throwOnMissingStubBuilder.name = "enableThrowOnMissingStub";
+    throwOnMissingStubBuilder.defaultTo = Code("false");
+    throwOnMissingStubBuilder.named = true;
+    throwOnMissingStubBuilder.type = refer('bool');
+    final throwOnMissingStub = throwOnMissingStubBuilder.build();
+
     return Method((b) => b
       ..name = "_\$$name"
       ..returns = refer('dynamic')
       ..types.add(refer("T"))
+      ..optionalParameters.add(throwOnMissingStub)
       ..body = createSwitchStatement(mockitoConfig));
   }
 }
