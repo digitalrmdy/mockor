@@ -8,10 +8,12 @@ class ExampleUseCase3 {}
 void main() {
   ExampleUseCase exampleUseCase;
   ExampleUseCase2 exampleUseCase2;
+  ExampleUseCase exampleUseCaseThrows;
 
   setUp(() {
     exampleUseCase = mock();
     exampleUseCase2 = mock();
+    exampleUseCaseThrows = mock(throwOnMissingStub: true);
   });
   test('test 2 different example use cases', () {
     expect(exampleUseCase, isNotNull);
@@ -35,6 +37,15 @@ void main() {
       print(e.message);
     } catch (e) {
       fail("expected 'UnimplementedError'");
+    }
+  });
+
+  test('demonstrate throwOnMissingStub', () {
+    try {
+      exampleUseCaseThrows.example();
+      fail('expected exception');
+    } catch (e) {
+      print(e);
     }
   });
 }
