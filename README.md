@@ -60,4 +60,19 @@ void main() {
 }
 ```
 
-for more info check out the example module.
+### Optional: throw exceptions on missing stubs
+
+The `_$mock<T>()` method takes in an optional `bool` parameter named `enableThrowOnMissingStub`. This wraps the `Mock` object with the `throwOnMissingStub` method so that you get exceptions when you try to call a method that is not stubbed.
+
+
+```dart
+T mock<T>({bool throwOnMissingStub = false}) => _$mock<T>(enableThrowOnMissingStub: throwOnMissingStub);
+
+var myService = mock<MyService>(throwOnMissingStub: true);
+when(myService.doSomethingElse()).thenReturn(true);
+
+myService.doSomething(); // this will throw an exception
+myService.doSomethingElse(); // this will not throw an exception
+```
+
+For more info check out the example module.

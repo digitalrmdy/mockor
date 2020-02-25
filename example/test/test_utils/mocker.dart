@@ -6,4 +6,4 @@ import 'package:mockito/mockito.dart';
 part 'mocker.g.dart';
 
 @GenerateMocker([ExampleUseCase, ExampleUseCase2])
-T mock<T>() => _$mock<T>();
+T mock<T>({bool throwOnMissingStub = false}) => _$mock<T>(enableThrowOnMissingStub: throwOnMissingStub);

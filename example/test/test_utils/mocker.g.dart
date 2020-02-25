@@ -10,12 +10,20 @@ class _$MockExampleUseCase extends Mock implements ExampleUseCase {}
 
 class _$MockExampleUseCase2 extends Mock implements ExampleUseCase2 {}
 
-dynamic _$mock<T>() {
+dynamic _$mock<T>({bool enableThrowOnMissingStub = false}) {
   switch (T) {
     case ExampleUseCase:
-      return _$MockExampleUseCase();
+      final mock = _$MockExampleUseCase();
+      if (enableThrowOnMissingStub) {
+        throwOnMissingStub(mock);
+      }
+      return mock;
     case ExampleUseCase2:
-      return _$MockExampleUseCase2();
+      final mock = _$MockExampleUseCase2();
+      if (enableThrowOnMissingStub) {
+        throwOnMissingStub(mock);
+      }
+      return mock;
     default:
       throw UnimplementedError(
           '''Error, a mock class for '$T' has not been generated yet.
