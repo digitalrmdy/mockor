@@ -10,7 +10,7 @@ Add the mockito code generator to your dev dependencies.
 
 ```yaml
 dev_dependencies:
-  mockito_builder: ^0.1.0
+  mockito_builder: ^0.1.1
 
 ```
 
@@ -35,7 +35,7 @@ part 'mocker.g.dart';
 T mock<T>() => _$mock<T>();
 ```
 
-### To use the generated mocks, simple import and call the defined mock function
+### To use the generated mocks, simply import and call the defined mock function
 
 ```dart
 import '../../mocker.dart';
@@ -58,4 +58,4 @@ void main() {
 }
 ```
 
-for more info check out the example module.
+for more info check out the [example](https://github.com/digitalrmdy/mockito-builder/tree/master/example) module.
