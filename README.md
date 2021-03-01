@@ -1,6 +1,6 @@
 # mockito_builder
 
-generate flutter mockito mocks.
+generate Flutter [mockito](https://pub.dev/packages/mockito) mocks.
 
 ## Getting Started
 
@@ -10,9 +10,7 @@ Add the mockito code generator to your dev dependencies.
 
 ```yaml
 dev_dependencies:
-  mockito_builder:
-    git:
-      url: https://github.com/digitalrmdy/mockito-builder.git
+  mockito_builder: ^0.1.0
 
 ```
 
@@ -21,7 +19,7 @@ dev_dependencies:
 
 ```dart
 
-import 'package:mockito_builder_annotations/mockito_builder_annotations.dart';
+import 'package:mockito_builder/mockito_builder.dart';
 import 'domain/navigation/navigation_service.dart';
 import 'domain/usecases/register_user_use_case.dart';
 ///make sure to import the mockito package because the generated code depends on it.

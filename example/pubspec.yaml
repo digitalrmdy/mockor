@@ -1,7 +1,4 @@
 name: example
-description: mockito builder example uage
-version: 0.0.1
-author:
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -16,9 +13,7 @@ dev_dependencies:
     sdk: flutter
   build_runner: ^1.7.2
   mockito: 4.1.1
-  mockito_builder:
-    git:
-      url: https://github.com/digitalrmdy/mockito-builder.git
+  mockito_builder: 0.1.0
 
 dependency_overrides:
   mockito_builder:

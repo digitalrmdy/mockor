@@ -3,8 +3,9 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:mockito_builder/src/dartbuilders/mockito_builder_dart_builder.dart';
 import 'package:mockito_builder/src/models/models.dart';
-import 'package:mockito_builder_annotations/mockito_builder_annotations.dart';
 import 'package:source_gen/source_gen.dart';
+
+import '../../mockito_builder.dart';
 
 class MockitoGenerator extends GeneratorForAnnotation<GenerateMocker> {
   const MockitoGenerator();

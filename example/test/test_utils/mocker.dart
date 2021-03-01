@@ -1,4 +1,4 @@
-import 'package:mockito_builder_annotations/mockito_builder_annotations.dart';
+import 'package:mockito_builder/mockito_builder.dart';
 
 import '../usecase/example_use_case.dart';
 import 'package:mockito/mockito.dart';
