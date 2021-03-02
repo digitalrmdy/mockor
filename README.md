@@ -1,6 +1,6 @@
-# mockito_builder
+[![Pub Package](https://img.shields.io/pub/v/mockito_builder.svg)](https://pub.dev/packages/mockito_builder)
 
-generate Flutter [mockito](https://pub.dev/packages/mockito) mocks and mock method with a list of types to be mocked.
+Generate Flutter [mockito](https://pub.dev/packages/mockito) mocks and mock method with a list of types to be mocked.
 
 ## Getting Started
 
