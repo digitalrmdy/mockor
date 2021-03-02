@@ -298,6 +298,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.9.6+3"
+  mockito_builder_annotations:
+    dependency: "direct main"
+    description:
+      path: annotations
+      relative: true
+    source: path
+    version: "0.2.0"
   node_interop:
     dependency: transitive
     description:

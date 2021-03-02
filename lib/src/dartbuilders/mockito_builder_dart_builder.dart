@@ -1,9 +1,9 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:mockito_builder/src/models/models.dart';
+import 'package:mockito_builder_annotations/mockito_builder_annotations.dart';
 
-import '../annotations/mockito_builder_annotation.dart';
-
+///Builds Dart code of the mocker function
 class MockitoDartBuilder {
   String buildDartFile(MockitoConfig mockitoConfig) {
     final lib = Library((b) => b

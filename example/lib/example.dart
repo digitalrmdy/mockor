@@ -2,7 +2,7 @@ library example;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:mockito_builder/mockito_builder.dart';
+import 'package:mockito_builder_annotations/mockito_builder_annotations.dart';
 
 part 'example.g.dart';
 

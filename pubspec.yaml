@@ -1,6 +1,6 @@
 name: mockito_builder
-description: generate flutter mockito mocks.
-version: 0.1.1
+description: Generate Flutter `mockito` mocks and mock method with a list of types to be mocked.
+version: 0.2.0
 homepage: https://rmdy.be
 
 environment:
@@ -12,6 +12,7 @@ dependencies:
   build: ^1.2.2
   dart_style: ^1.3.3
   code_builder: ^3.2.0
+  mockito_builder_annotations: ^0.2.0
   flutter:
     sdk: flutter
 
@@ -20,6 +21,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+dependency_overrides:
+  mockito_builder_annotations:
+    path: annotations
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

@@ -9,7 +9,7 @@ builders:
   # `applies_builders` - uses the `combining_builder` from `source_gen` to
   #   combine the parts from each builder into one part file.
   mockito_builder:
-    import: "package:mockito_builder/mockito_builder.dart"
+    import: "package:mockito_builder/builder.dart"
     builder_factories: ["mockitoBuilder"]
     build_extensions: {".dart": ["mockito_builder.g.part"]}
     auto_apply: dependents

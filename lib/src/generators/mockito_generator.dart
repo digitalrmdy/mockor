@@ -3,10 +3,10 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:mockito_builder/src/dartbuilders/mockito_builder_dart_builder.dart';
 import 'package:mockito_builder/src/models/models.dart';
+import 'package:mockito_builder_annotations/mockito_builder_annotations.dart';
 import 'package:source_gen/source_gen.dart';
 
-import '../../mockito_builder.dart';
-
+///Generator for the mocker function implementation.
 class MockitoGenerator extends GeneratorForAnnotation<GenerateMocker> {
   const MockitoGenerator();
 
@@ -18,7 +18,7 @@ class MockitoGenerator extends GeneratorForAnnotation<GenerateMocker> {
     return reader;
   }
 
-  dynamic generateForAnnotatedElement(
+  String generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) {
     final generatorConfig = getGeneratorConfig(annotation, element);
     if (generatorConfig != null) {
@@ -54,6 +54,7 @@ class MockitoGenerator extends GeneratorForAnnotation<GenerateMocker> {
   }
 }
 
+///Config with mocker function and the types that need mock implementations
 class GeneratorConfig {
   final List<DartType> types;
   final FunctionElement mockerFunction;
@@ -66,6 +67,7 @@ class GeneratorConfig {
   }
 }
 
+///a factory for generating [MockDef] validated instances
 class MockitoConfigFactory {
   final GeneratorConfig generatorConfig;
 
@@ -93,6 +95,7 @@ class MockitoConfigFactory {
   }
 }
 
+///General application exception
 class MockitoGeneratorException implements Exception {
   final String cause;
 

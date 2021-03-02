@@ -1,6 +1,6 @@
 # mockito_builder
 
-generate Flutter [mockito](https://pub.dev/packages/mockito) mocks.
+generate Flutter [mockito](https://pub.dev/packages/mockito) mocks and mock method with a list of types to be mocked.
 
 ## Getting Started
 
@@ -10,7 +10,7 @@ Add the mockito code generator to your dev dependencies.
 
 ```yaml
 dev_dependencies:
-  mockito_builder: ^0.1.1
+  mockito_builder: ^0.2.0
 
 ```
 
