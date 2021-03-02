@@ -83,7 +83,7 @@ class MockitoConfigFactory {
 
   MockDef toMockDef(DartType dartType) {
     validateType(dartType);
-    return MockDef(type: dartType.name);
+    return MockDef(type: dartType.getDisplayString(withNullability: null));
   }
 
   bool notNull(Object o) => o != null;
