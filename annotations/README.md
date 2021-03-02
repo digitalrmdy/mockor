@@ -2,4 +2,4 @@
 
 Defines the annotations used by [mockito_builder] to generate [mockito] classes.
 
-See the [example] to understand how to configure your package.
+Normally you won't need to add this dependency to use the [mockito_builder].
