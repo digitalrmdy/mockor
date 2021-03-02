@@ -20,13 +20,17 @@ class MockitoGenerator extends GeneratorForAnnotation<GenerateMocker> {
 
   String generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) {
-    final generatorConfig = getGeneratorConfig(annotation, element);
-    if (generatorConfig != null) {
-      final mockitoConfig = MockitoConfigFactory(generatorConfig).create();
-      if (mockitoConfig != null) {
-        final dartBuilder = MockitoDartBuilder();
-        return dartBuilder.buildDartFile(mockitoConfig);
+    try {
+      final generatorConfig = getGeneratorConfig(annotation, element);
+      if (generatorConfig != null) {
+        final mockitoConfig = MockitoConfigFactory(generatorConfig).create();
+        if (mockitoConfig != null) {
+          final dartBuilder = MockitoDartBuilder();
+          return dartBuilder.buildDartFile(mockitoConfig);
+        }
       }
+    } catch (e, s) {
+      throw Exception("$e, $s");
     }
 
     return null;
@@ -83,7 +87,8 @@ class MockitoConfigFactory {
 
   MockDef toMockDef(DartType dartType) {
     validateType(dartType);
-    return MockDef(type: dartType.getDisplayString(withNullability: null));
+    // ignore: deprecated_member_use ignore until analyzer can be updated
+    return MockDef(type: dartType.name);
   }
 
   bool notNull(Object o) => o != null;
@@ -95,7 +100,7 @@ class MockitoConfigFactory {
   }
 }
 
-///General application exception
+///Exception that will be thrown on validation errors
 class MockitoGeneratorException implements Exception {
   final String cause;
 

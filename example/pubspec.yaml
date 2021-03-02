@@ -8,6 +8,7 @@ dependencies:
     sdk: flutter
   #not needed when mockito_builder is only used in test folder
   mockito_builder_annotations: ^0.2.1
+  analyzer: 0.39.0
 
 
 dev_dependencies:
