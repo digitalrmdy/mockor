@@ -14,7 +14,7 @@ dev_dependencies:
 
 ```
 
-### Add a `mocker.dart` file in your test folder with a `@GenerateMocker` method.
+### Add a `mocker.dart` file in your test folder and a mock method with a [`@GenerateMocker`](https://pub.dev/packages/mocktio_builder_annotations) annotation.
 
 
 ```dart
