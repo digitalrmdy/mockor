@@ -10,7 +10,7 @@ Add the mockito code generator to your dev dependencies.
 
 ```yaml
 dev_dependencies:
-  mockito_builder: ^0.2.1
+  mockito_builder: ^0.2.2
 
 ```
 

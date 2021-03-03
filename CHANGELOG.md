@@ -1,3 +1,7 @@
+## 0.2.2
+
+* Allow the latest analyzer version `0.41.x`
+
 ## 0.2.1
 
 * Put annotation in separate module

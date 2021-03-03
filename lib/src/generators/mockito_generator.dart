@@ -87,8 +87,7 @@ class MockitoConfigFactory {
 
   MockDef toMockDef(DartType dartType) {
     validateType(dartType);
-    // ignore: deprecated_member_use ignore until analyzer can be updated
-    return MockDef(type: dartType.name);
+    return MockDef(type: dartType.getDisplayString(withNullability: false));
   }
 
   bool notNull(Object o) => o != null;
