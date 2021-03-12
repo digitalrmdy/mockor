@@ -1,3 +1,9 @@
+## 0.2.2
+
+* Update documentation
+* Improve analyzer compatibility with different versions
+* Improve code_builder compatibility
+
 ## 0.2.1
 
 * Put annotation in separate module

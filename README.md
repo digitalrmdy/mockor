@@ -6,15 +6,17 @@ Generate Flutter [mockito](https://pub.dev/packages/mockito) mocks and mock meth
 
 ### Add the dependency
 
-Add the mockito code generator to your dev dependencies.
+Add the `mockito_builder` to your dev_dependencies. And [`mockito_builder_annotations`](https://pub.dev/packages/mocktio_builder_annotations) to dependencies.
 
 ```yaml
+dependencies:
+  mockito_builder_annotations: ^0.2.2
 dev_dependencies:
-  mockito_builder: ^0.2.1
+  mockito_builder: ^0.2.2
 
 ```
 
-### Add a `mocker.dart` file in your test folder and a mock method with a [`@GenerateMocker`](https://pub.dev/packages/mocktio_builder_annotations) annotation.
+### Add a `mocker.dart` file in your test folder and a mock method with a [`@GenerateMocker`](https://pub.dev/packages/mocktio_builder_annotations) annotation. Don't forget to import [mockito](https://pub.dev/packages/mockito) here.
 
 
 ```dart

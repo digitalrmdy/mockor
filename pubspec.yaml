@@ -1,18 +1,18 @@
 name: mockito_builder
 description: Generate Flutter `mockito` mocks and mock method with a list of types to be mocked.
-version: 0.2.1
+version: 0.2.2
 homepage: https://rmdy.be
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
-  analyzer: ^0.39.0
+  analyzer: ">=0.39.0 <1.0.0"
   source_gen: ^0.9.5
   build: ">=1.2.2 <2.0.0"
   dart_style: ^1.3.3
-  code_builder: ^3.6.0
-  mockito_builder_annotations: ^0.2.1
+  code_builder: ^3.2.0
+  mockito_builder_annotations: ^0.2.2
   flutter:
     sdk: flutter
 
