@@ -12,7 +12,7 @@ dependencies:
   build: ">=1.2.2 <2.0.0"
   dart_style: ^1.3.3
   code_builder: ^3.2.0
-  mockito_builder_annotations: ^0.2.1
+  mockito_builder_annotations: ^0.2.2
   flutter:
     sdk: flutter
 
