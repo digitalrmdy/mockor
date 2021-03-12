@@ -1,4 +1,5 @@
 import 'package:mockito_builder_annotations/mockito_builder_annotations.dart';
+import 'package:mockito/mockito.dart';
 
 abstract class ExampleUseCase {
   int example();
