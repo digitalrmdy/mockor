@@ -7,9 +7,9 @@ import 'usecase/example_use_case.dart';
 class ExampleUseCase3 {}
 
 void main() {
-  ExampleUseCase? exampleUseCase;
-  ExampleUseCase2? exampleUseCase2;
-  ExampleUseCase? exampleUseCaseThrows;
+  late ExampleUseCase exampleUseCase;
+  late ExampleUseCase2 exampleUseCase2;
+  late ExampleUseCase exampleUseCaseThrows;
 
   setUp(() {
     exampleUseCase = mock();
@@ -19,12 +19,12 @@ void main() {
   test('test 2 different example use cases', () {
     expect(exampleUseCase, isNotNull);
     expect(exampleUseCase2, isNotNull);
-    when(exampleUseCase!.example()).thenReturn(2);
-    when(exampleUseCase2!.example2()).thenThrow(Exception());
+    when(exampleUseCase.example()).thenReturn(2);
+    when(exampleUseCase2.example2()).thenThrow(Exception());
 
-    expect(exampleUseCase!.example(), 2);
+    expect(exampleUseCase.example(), 2);
     try {
-      exampleUseCase2!.example2();
+      exampleUseCase2.example2();
       fail('expected exception');
     } on Exception {}
   });
@@ -43,7 +43,7 @@ void main() {
 
   test('demonstrate throwOnMissingStub', () {
     try {
-      exampleUseCaseThrows!.example();
+      exampleUseCaseThrows.example();
       fail('expected exception');
     } catch (e) {
       print(e);
