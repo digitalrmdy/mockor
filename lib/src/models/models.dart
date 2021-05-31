@@ -1,7 +1,7 @@
 class MockDef {
   final String type;
 
-  const MockDef({this.type});
+  const MockDef({required this.type});
 
   String get targetClassName => "_\$Mock$type";
 
@@ -20,5 +20,5 @@ class MockitoConfig {
   final mockerName;
   final Set<MockDef> mockDefs;
 
-  MockitoConfig({this.mockDefs, this.mockerName});
+  MockitoConfig({required this.mockDefs, this.mockerName});
 }

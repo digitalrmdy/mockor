@@ -35,7 +35,7 @@ class MockitoGenerator extends GeneratorForAnnotation<GenerateMocker> {
     throw MockitoGeneratorException(message);
   }
 
-  GeneratorConfig getGeneratorConfig(
+  GeneratorConfig? getGeneratorConfig(
       ConstantReader annotation, Element element) {
     if (element is FunctionElement) {
       final types = readParam(annotation, 'types')
@@ -57,7 +57,7 @@ class GeneratorConfig {
   final List<DartType> types;
   final FunctionElement mockerFunction;
 
-  GeneratorConfig({this.types, this.mockerFunction});
+  GeneratorConfig({required this.types, required this.mockerFunction});
 
   @override
   String toString() {
