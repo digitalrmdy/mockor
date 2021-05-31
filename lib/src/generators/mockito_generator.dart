@@ -41,7 +41,7 @@ class MockitoGenerator extends GeneratorForAnnotation<GenerateMocker> {
       final types = readParam(annotation, 'types')
           .listValue
           .map((x) => x.toTypeValue())
-          .toList() as List<DartType>;
+          .toList();
       if (types.toSet().length != types.length) {
         error('Some types were specified twice!');
       }
@@ -54,7 +54,7 @@ class MockitoGenerator extends GeneratorForAnnotation<GenerateMocker> {
 }
 
 class GeneratorConfig {
-  final List<DartType> types;
+  final List<DartType?> types;
   final FunctionElement mockerFunction;
 
   GeneratorConfig({required this.types, required this.mockerFunction});
@@ -78,8 +78,8 @@ class MockitoConfigFactory {
     assert(!lib!.isDartCore);
   }
 
-  MockDef toMockDef(DartType dartType) {
-    validateType(dartType);
+  MockDef toMockDef(DartType? dartType) {
+    validateType(dartType!);
     return MockDef(type: dartType.name as String);
   }
 
