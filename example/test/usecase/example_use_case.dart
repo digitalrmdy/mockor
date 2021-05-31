@@ -18,6 +18,6 @@ abstract class ExampleUseCase2 {
 class ExampleUseCase2Impl implements ExampleUseCase2 {
   @override
   void example2() {
-    print('exampl2');
+    print('example2');
   }
 }
