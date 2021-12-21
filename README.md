@@ -4,15 +4,14 @@ Generate Flutter [mockito](https://pub.dev/packages/mockito) mocks and mock meth
 
 ## Getting Started
 
-### Add the dependency
-
-Add the `mockito_builder` to your dev_dependencies. And [`mockito_builder_annotations`](https://pub.dev/packages/mocktio_builder_annotations) to dependencies.
+### Add the dependencies
+This package depends on [`mockito_builder_annotations`](https://pub.dev/packages/mockito_builder_annotations)
 
 ```yaml
 dependencies:
-  mockito_builder_annotations: ^0.2.2
+  mockito_builder_annotations: ^1.0.0
 dev_dependencies:
-  mockito_builder: ^0.2.2
+  mockito_builder: ^1.0.0
 
 ```
 
@@ -30,8 +29,12 @@ import 'package:mockito/mockito.dart';
 part 'mocker.g.dart';
 
 ///this will generate a `mocker.g.dart` file.
-///specify the classes that should be mocked. 
-@GenerateMocker([RegisterUserUseCase, NavigationService])
+///specify the classes that should be mocked.
+const List<Type> _types = [RegisterUserUseCase, NavigationService];
+///annotation from mockito_builder_annotations
+@GenerateMocker(_types)
+///annotation from mockito which will generate mock implementations that mockito_builder will use
+@GenerateMocks(_types)
 ///define a method without any paramters and one type paramter. 
 ///an implementation of the method will be generated with a _$ prefix.
 T mock<T>() => _$mock<T>();
@@ -45,8 +48,8 @@ import 'domain/navigation/navigation_service.dart';
 import 'domain/usecases/register_user_use_case.dart';
 
 void main() {
-  RegisterUserUseCase registerUserUseCase;
-  NavigationService navigationService;
+  late RegisterUserUseCase registerUserUseCase;
+  late NavigationService navigationService;
   RegisterViewModel viewModel;
 
   setUp(() {

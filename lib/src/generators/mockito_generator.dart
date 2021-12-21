@@ -18,16 +18,14 @@ class MockitoGenerator extends GeneratorForAnnotation<GenerateMocker> {
     return reader;
   }
 
-  String generateForAnnotatedElement(
+  String? generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) {
     try {
       final generatorConfig = getGeneratorConfig(annotation, element);
       if (generatorConfig != null) {
         final mockitoConfig = MockitoConfigFactory(generatorConfig).create();
-        if (mockitoConfig != null) {
-          final dartBuilder = MockitoDartBuilder();
-          return dartBuilder.buildDartFile(mockitoConfig);
-        }
+        final dartBuilder = MockitoDartBuilder();
+        return dartBuilder.buildDartFile(mockitoConfig);
       }
     } catch (e, s) {
       throw Exception("$e, $s");
@@ -40,12 +38,21 @@ class MockitoGenerator extends GeneratorForAnnotation<GenerateMocker> {
     throw MockitoGeneratorException(message);
   }
 
-  GeneratorConfig getGeneratorConfig(
+  GeneratorConfig? getGeneratorConfig(
       ConstantReader annotation, Element element) {
     if (element is FunctionElement) {
-      final types = readParam(annotation, 'types')
+      final nullableTypes = readParam(annotation, 'types')
           .listValue
           .map((x) => x.toTypeValue())
+          .toList();
+      nullableTypes.forEachIndexed((i, item) {
+        if (item == null) {
+          error('$DartType at $i cannot be determined');
+        }
+      });
+      final types = nullableTypes
+          .where((element) => element != null)
+          .cast<DartType>()
           .toList();
       if (types.toSet().length != types.length) {
         error('Some types were specified twice!');
@@ -63,7 +70,7 @@ class GeneratorConfig {
   final List<DartType> types;
   final FunctionElement mockerFunction;
 
-  GeneratorConfig({this.types, this.mockerFunction});
+  GeneratorConfig({required this.types, required this.mockerFunction});
 
   @override
   String toString() {
@@ -80,23 +87,29 @@ class MockitoConfigFactory {
   FunctionElement get mocker => generatorConfig.mockerFunction;
 
   void validateType(DartType dartType) {
-    final lib = dartType.element.library;
+    final lib = dartType.element?.library;
+    lib!;
     assert(!lib.isDartAsync);
     assert(!lib.isDartCore);
   }
 
   MockDef toMockDef(DartType dartType) {
     validateType(dartType);
-    // ignore: deprecated_member_use ignore until analyzer can be updated
-    return MockDef(type: dartType.name);
+    return MockDef(type: dartType.getDisplayString(withNullability: false));
   }
-
-  bool notNull(Object o) => o != null;
 
   MockitoConfig create() {
     return MockitoConfig(
         mockerName: mocker.name,
         mockDefs: generatorConfig.types.map(toMockDef).toSet());
+  }
+}
+
+extension ListExtension<T> on List<T?> {
+  void forEachIndexed(void Function(int i, T? item) block) {
+    for (var i = 0; i < length; i++) {
+      block(i, this[i]);
+    }
   }
 }
 

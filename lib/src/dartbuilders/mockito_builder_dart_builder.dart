@@ -6,9 +6,7 @@ import 'package:mockito_builder_annotations/mockito_builder_annotations.dart';
 ///Builds Dart code of the mocker function
 class MockitoDartBuilder {
   String buildDartFile(MockitoConfig mockitoConfig) {
-    final lib = Library((b) => b
-      ..body.addAll(mockitoConfig.mockDefs.map(buildMockitoClass).toList())
-      ..body.add(buildMockerMethod(mockitoConfig)));
+    final lib = Library((b) => b..body.add(buildMockerMethod(mockitoConfig)));
     final emitter = DartEmitter();
     return DartFormatter().format('${lib.accept(emitter)}');
   }

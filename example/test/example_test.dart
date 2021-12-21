@@ -3,8 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
 void main() {
-  ExampleUseCase exampleUseCase;
-  ExampleUseCase2 exampleUseCase2;
+  late ExampleUseCase exampleUseCase;
+  late ExampleUseCase2 exampleUseCase2;
 
   setUp(() {
     exampleUseCase = mock();

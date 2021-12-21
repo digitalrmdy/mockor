@@ -1,3 +1,7 @@
+## 1.0.0
+
+* Fix README hyperlink
+
 ## 0.2.2
 
 * Update documentation

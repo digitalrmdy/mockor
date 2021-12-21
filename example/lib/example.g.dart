@@ -6,16 +6,12 @@ part of example;
 // MockitoGenerator
 // **************************************************************************
 
-class _$MockExampleUseCase extends Mock implements ExampleUseCase {}
-
-class _$MockExampleUseCase2 extends Mock implements ExampleUseCase2 {}
-
 dynamic _$mock<T>() {
   switch (T) {
     case ExampleUseCase:
-      return _$MockExampleUseCase();
+      return MockExampleUseCase();
     case ExampleUseCase2:
-      return _$MockExampleUseCase2();
+      return MockExampleUseCase2();
     default:
       throw UnimplementedError(
           '''Error, a mock class for '$T' has not been generated yet.

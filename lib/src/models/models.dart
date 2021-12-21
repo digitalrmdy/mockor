@@ -2,10 +2,10 @@
 class MockDef {
   final String type;
 
-  const MockDef({this.type});
+  const MockDef({required this.type});
 
   ///the name of the class based on the [type]
-  String get targetClassName => "_\$Mock$type";
+  String get targetClassName => "Mock$type";
 
   @override
   bool operator ==(Object other) =>
@@ -26,5 +26,5 @@ class MockitoConfig {
   ///unique set of types to create mock classes for
   final Set<MockDef> mockDefs;
 
-  MockitoConfig({this.mockDefs, this.mockerName});
+  MockitoConfig({required this.mockDefs, required this.mockerName});
 }

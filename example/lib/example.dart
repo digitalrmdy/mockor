@@ -2,6 +2,8 @@ library example;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:mockito/annotations.dart';
+import 'package:example/example.mocks.dart';
 import 'package:mockito_builder_annotations/mockito_builder_annotations.dart';
 
 part 'example.g.dart';
@@ -30,14 +32,16 @@ class ExampleUseCase2Impl implements ExampleUseCase2 {
   }
 }
 
-@GenerateMocker([ExampleUseCase, ExampleUseCase2])
+const List<Type> _types = [ExampleUseCase, ExampleUseCase2];
+@GenerateMocker(_types)
+@GenerateMocks(_types)
 T mock<T>() => _$mock<T>();
 
 class ExampleUseCase3 {}
 
 void main() {
-  ExampleUseCase exampleUseCase;
-  ExampleUseCase2 exampleUseCase2;
+  late ExampleUseCase exampleUseCase;
+  late ExampleUseCase2 exampleUseCase2;
 
   setUp(() {
     exampleUseCase = mock();
