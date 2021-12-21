@@ -19,3 +19,11 @@ Navigate to the 'mock' method and add the type to the types list in the 'Generat
 Finally run the build command: 'flutter packages pub run build_runner build'.''');
   }
 }
+
+extension MockExampleUseCaseExtension on ExampleUseCase {
+  MockExampleUseCase get mock => this as MockExampleUseCase;
+}
+
+extension MockExampleUseCase2Extension on ExampleUseCase2 {
+  MockExampleUseCase2 get mock => this as MockExampleUseCase2;
+}

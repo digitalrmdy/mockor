@@ -6,6 +6,6 @@ part 'mocker.g.dart';
 
 const List<Type> _types = [ExampleUseCase, ExampleUseCase2];
 
-@GenerateMocker(_types)
+@GenerateMocker([], mockitoGeneratedTypes: _types)
 @GenerateMocks(_types)
 T mock<T>() => _$mock<T>();

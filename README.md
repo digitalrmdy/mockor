@@ -24,7 +24,9 @@ import 'package:mockito_builder/mockito_builder.dart';
 import 'domain/navigation/navigation_service.dart';
 import 'domain/usecases/register_user_use_case.dart';
 ///make sure to import the mockito package because the generated code depends on it.
-import 'package:mockito/mockito.dart';
+import 'package:mockito/annotations.dart';
+///the file that mockito will generate, has to be imported here
+import 'mocker.mocks.dart';
 
 part 'mocker.g.dart';
 

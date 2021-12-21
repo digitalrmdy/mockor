@@ -6,12 +6,25 @@ import 'package:mockito_builder_annotations/mockito_builder_annotations.dart';
 ///Builds Dart code of the mocker function
 class MockitoDartBuilder {
   String buildDartFile(MockitoConfig mockitoConfig) {
-    final lib = Library((b) => b..body.add(buildMockerMethod(mockitoConfig)));
+    final lib = Library(
+      (b) {
+        b
+          ..body.addAll(
+              mockitoConfig.mockDefsToGenerate.map(buildMockitoClass).toList())
+          ..body.add(buildMockerMethod(mockitoConfig));
+        if (mockitoConfig.generateMockExtensions) {
+          b.body.addAll(mockitoConfig.mockDefsMockitoGenerated
+              .map(buildMockImplExtension)
+              .toList());
+        }
+      },
+    );
     final emitter = DartEmitter();
     return DartFormatter().format('${lib.accept(emitter)}');
   }
 
   Class buildMockitoClass(MockDef mockitoDef) {
+    assert(mockitoDef.mockDefSource == MockDefSource.INTERNAL);
     return Class((b) => b
       ..name = mockitoDef.targetClassName
       ..extend = refer("Mock")
@@ -45,5 +58,17 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
       ..returns = refer('dynamic')
       ..types.add(refer("T"))
       ..body = createSwitchStatement(mockitoConfig));
+  }
+
+  Extension buildMockImplExtension(MockDef mockDef) {
+    return Extension((b) => b
+      ..name = "${mockDef.targetClassName}Extension"
+      ..on = refer(mockDef.type)
+      ..methods.add(Method((b) => b
+        ..name = "mock"
+        ..type = MethodType.getter
+        ..lambda = true
+        ..returns = refer(mockDef.targetClassName)
+        ..body = Code("this as ${mockDef.targetClassName}"))));
   }
 }

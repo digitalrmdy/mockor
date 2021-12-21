@@ -3,20 +3,20 @@ library example;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:example/example.mocks.dart';
+import 'example.mocks.dart';
 import 'package:mockito_builder_annotations/mockito_builder_annotations.dart';
 
 part 'example.g.dart';
 
 abstract class ExampleUseCase {
-  int example();
+  int example(int i);
 
   factory ExampleUseCase() => ExampleUseCaseImpl();
 }
 
 class ExampleUseCaseImpl implements ExampleUseCase {
   @override
-  int example() => 1;
+  int example(int i) => 1;
 }
 
 abstract class ExampleUseCase2 {
@@ -32,9 +32,12 @@ class ExampleUseCase2Impl implements ExampleUseCase2 {
   }
 }
 
-const List<Type> _types = [ExampleUseCase, ExampleUseCase2];
-@GenerateMocker(_types)
-@GenerateMocks(_types)
+const List<Type> _mockitoGeneratedTypes = [ExampleUseCase];
+@GenerateMocker(
+  [ExampleUseCase2],
+  mockitoGeneratedTypes: _mockitoGeneratedTypes,
+)
+@GenerateMocks(_mockitoGeneratedTypes)
 T mock<T>() => _$mock<T>();
 
 class ExampleUseCase3 {}
@@ -50,10 +53,10 @@ void main() {
   test('test 2 different example use cases', () {
     expect(exampleUseCase, isNotNull);
     expect(exampleUseCase2, isNotNull);
-    when(exampleUseCase.example()).thenReturn(2);
+    when(exampleUseCase.mock.example(any)).thenReturn(2);
     when(exampleUseCase2.example2()).thenThrow(Exception());
 
-    expect(exampleUseCase.example(), 2);
+    expect(exampleUseCase.mock.example(any), 2);
     try {
       exampleUseCase2.example2();
       fail('expected exception');
