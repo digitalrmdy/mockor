@@ -23,5 +23,5 @@ Finally run the build command: 'flutter packages pub run build_runner build'.'''
 }
 
 extension MockExampleUseCaseExtension on ExampleUseCase {
-  MockExampleUseCase get mock => this as MockExampleUseCase;
+  MockExampleUseCase asMock() => this as MockExampleUseCase;
 }

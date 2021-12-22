@@ -14,7 +14,7 @@ class MockitoDartBuilder {
           ..body.add(buildMockerMethod(mockitoConfig));
         if (mockitoConfig.generateMockExtensions) {
           b.body.addAll(mockitoConfig.mockDefsMockitoGenerated
-              .map(buildMockImplExtension)
+              .map(buildAsMockExtension)
               .toList());
         }
       },
@@ -60,13 +60,12 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
       ..body = createSwitchStatement(mockitoConfig));
   }
 
-  Extension buildMockImplExtension(MockDef mockDef) {
+  Extension buildAsMockExtension(MockDef mockDef) {
     return Extension((b) => b
       ..name = "${mockDef.targetClassName}Extension"
       ..on = refer(mockDef.type)
       ..methods.add(Method((b) => b
-        ..name = "mock"
-        ..type = MethodType.getter
+        ..name = "asMock"
         ..lambda = true
         ..returns = refer(mockDef.targetClassName)
         ..body = Code("this as ${mockDef.targetClassName}"))));

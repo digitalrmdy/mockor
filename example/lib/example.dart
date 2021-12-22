@@ -53,10 +53,10 @@ void main() {
   test('test 2 different example use cases', () {
     expect(exampleUseCase, isNotNull);
     expect(exampleUseCase2, isNotNull);
-    when(exampleUseCase.mock.example(any)).thenReturn(2);
+    when(exampleUseCase.asMock().example(any)).thenReturn(2);
     when(exampleUseCase2.example2()).thenThrow(Exception());
 
-    expect(exampleUseCase.mock.example(any), 2);
+    expect(exampleUseCase.asMock().example(any), 2);
     try {
       exampleUseCase2.example2();
       fail('expected exception');

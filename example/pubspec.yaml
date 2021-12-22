@@ -7,7 +7,7 @@ dependencies:
   flutter:
     sdk: flutter
   mockito_builder_annotations: ^1.0.0
-  analyzer: ^2.0.0
+  analyzer: '>=1.7.0 <4.0.0'
 
 
 dev_dependencies:
