@@ -1,6 +1,7 @@
-## 1.0.0
+## 0.3.0
 
 * Null safety
+* Support Mockito's own code generator
 
 ## 0.2.2
 

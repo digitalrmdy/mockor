@@ -9,9 +9,9 @@ This package depends on [`mockito_builder_annotations`](https://pub.dev/packages
 
 ```yaml
 dependencies:
-  mockito_builder_annotations: ^1.0.0
+  mockito_builder_annotations: ^0.3.0
 dev_dependencies:
-  mockito_builder: ^1.0.0
+  mockito_builder: ^0.3.0
 
 ```
 

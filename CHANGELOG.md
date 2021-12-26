@@ -1,5 +1,7 @@
-## 1.0.0
+## 0.3.0
 
+* Null safety
+* Support Mockito's own code generator
 * Fix README hyperlink
 
 ## 0.2.2
