@@ -3,6 +3,7 @@
 * Null safety
 * Support Mockito's own code generator
 * Include annotations in main module
+* Output `.mock_builder.dart` instead of `.g.dart`
 * Fix README hyperlink
 
 ## 0.2.2

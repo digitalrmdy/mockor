@@ -18,7 +18,7 @@ import 'package:source_gen/source_gen.dart';
 /// Not meant to be invoked by hand-authored code.
 Builder mockitoBuilder(BuilderOptions builderOptions) => PartBuilder(
       const [MockitoGenerator()],
-      '.g.dart',
+      '.mock_builder.dart',
       header: '''
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
