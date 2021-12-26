@@ -5,7 +5,7 @@
 part of example;
 
 // **************************************************************************
-// MockitoGenerator
+// MockerGenerator
 // **************************************************************************
 
 @GenerateMocks([ExampleUseCase, ExampleUseCase2])

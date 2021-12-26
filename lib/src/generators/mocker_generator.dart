@@ -1,14 +1,14 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
-import 'package:mockito_builder/annotations.dart';
-import 'package:mockito_builder/src/dartbuilders/mockito_builder_dart_builder.dart';
-import 'package:mockito_builder/src/models/models.dart';
+import 'package:mockor/annotations.dart';
+import 'package:mockor/src/dartbuilders/mocker_dart_builder.dart';
+import 'package:mockor/src/models/models.dart';
 import 'package:source_gen/source_gen.dart';
 
 ///Generator for the mocker function implementation.
-class MockitoGenerator extends GeneratorForAnnotation<GenerateMocker> {
-  const MockitoGenerator();
+class MockerGenerator extends GeneratorForAnnotation<GenerateMocker> {
+  const MockerGenerator();
 
   ConstantReader readParam(ConstantReader annotation, String parameter) {
     final reader = annotation.read(parameter);
@@ -33,7 +33,7 @@ class MockitoGenerator extends GeneratorForAnnotation<GenerateMocker> {
       final generatorConfig = getGeneratorConfig(annotation, element);
       if (generatorConfig != null) {
         final mockitoConfig = generatorConfig.createMocktioConfig();
-        final dartBuilder = MockitoDartBuilder();
+        final dartBuilder = MockerDartBuilder();
         return dartBuilder.buildDartFile(mockitoConfig);
       }
     } catch (e, s) {
@@ -86,7 +86,7 @@ class GeneratorConfig {
     required this.generateMocker,
     required this.mockerFunction,
   });
-  MockitoConfig createMocktioConfig() {
+  MockerConfig createMocktioConfig() {
     final mockDefs = types
         .map((t) => MockDef(
               mockDefNaming: generateMocker.useMockitoGeneratedTypes
@@ -96,7 +96,7 @@ class GeneratorConfig {
               type: t.getDisplayString(withNullability: false),
             ))
         .toSet();
-    return MockitoConfig(
+    return MockerConfig(
       mockerName: mockerFunction.name,
       generateMockitoAnnotation: generateMocker.generateMockitoAnnotation,
       mockDefs: mockDefs,

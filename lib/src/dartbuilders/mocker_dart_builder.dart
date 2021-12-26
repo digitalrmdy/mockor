@@ -1,11 +1,11 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
-import 'package:mockito_builder/annotations.dart';
-import 'package:mockito_builder/src/models/models.dart';
+import 'package:mockor/annotations.dart';
+import 'package:mockor/src/models/models.dart';
 
 ///Builds Dart code of the mocker function
-class MockitoDartBuilder {
-  String buildDartFile(MockitoConfig mockitoConfig) {
+class MockerDartBuilder {
+  String buildDartFile(MockerConfig mockitoConfig) {
     final lib = Library(
       (b) {
         b
@@ -30,14 +30,14 @@ class MockitoDartBuilder {
       ..implements.add(refer(mockitoDef.type)));
   }
 
-  String createUnimplementedErrorMessage(MockitoConfig mockitoConfig) {
+  String createUnimplementedErrorMessage(MockerConfig mockitoConfig) {
     final mockerName = mockitoConfig.mockerName;
     return '''Error, a mock class for \'\$T\' has not been generated yet.
 Navigate to the \'$mockerName\' method and add the type to the types list in the \'$GenerateMocker\' annotation.
 Finally run the build command: \'flutter packages pub run build_runner build\'.''';
   }
 
-  Block _createSwitchStatement(MockitoConfig mockitoConfig) {
+  Block _createSwitchStatement(MockerConfig mockitoConfig) {
     final list = <Code>[];
     list.add(Code("switch(T) {"));
     mockitoConfig.mockDefs.forEach((mockDef) {
@@ -50,7 +50,7 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
     return Block.of(list);
   }
 
-  Expression _buildGenerateMocksAnnotation(MockitoConfig mockitoConfig) {
+  Expression _buildGenerateMocksAnnotation(MockerConfig mockitoConfig) {
     final mockDefs = mockitoConfig.mockDefsMockitoGenerated;
     final typesJoined = mockDefs.map((e) => e.type).join(",");
     var code = "";
@@ -58,7 +58,7 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
     return CodeExpression(Code(code));
   }
 
-  Method buildMockerMethod(MockitoConfig mockitoConfig) {
+  Method buildMockerMethod(MockerConfig mockitoConfig) {
     final name = mockitoConfig.mockerName;
     return Method((b) {
       if (mockitoConfig.generateMockitoAnnotation) {

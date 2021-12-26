@@ -1,10 +1,10 @@
-## 0.4.0
+## 1.0.0
 
 * Null safety
 * Support Mockito's own code generator
 * Include annotations in main module
-* Output `.mock_builder.dart` instead of `.g.dart`
-* Fix README hyperlink
+* Output `.mockor.dart` instead of `.g.dart`
+* Rename to mockor
 
 ## 0.2.2
 

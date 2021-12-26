@@ -8,10 +8,10 @@ builders:
   # `build_to: cache` - the output is not put directly into the project
   # `applies_builders` - uses the `combining_builder` from `source_gen` to
   #   combine the parts from each builder into one part file.
-  mockito_builder:
-    import: "package:mockito_builder/builder.dart"
-    builder_factories: ["mockitoBuilder"]
-    build_extensions: {".dart": [".mock_builder.dart"]}
+  mockor:
+    import: "package:mockor/builder.dart"
+    builder_factories: ["mockor"]
+    build_extensions: {".dart": [".mockor.dart"]}
     auto_apply: dependents
     build_to: source
     runs_before: ["mockito|mockBuilder"]

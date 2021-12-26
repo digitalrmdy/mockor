@@ -33,7 +33,7 @@ class MockDef {
 }
 
 ///config for the mocker method
-class MockitoConfig {
+class MockerConfig {
   ///name of the mocker method
   final String mockerName;
 
@@ -42,7 +42,7 @@ class MockitoConfig {
 
   final bool generateMockitoAnnotation;
 
-  MockitoConfig(
+  MockerConfig(
       {required this.mockDefs,
       required this.mockerName,
       required this.generateMockitoAnnotation});

@@ -4,9 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'example.mocks.dart';
-import 'package:mockito_builder/annotations.dart';
+import 'package:mockor/annotations.dart';
 
-part 'example.mock_builder.dart';
+part 'example.mockor.dart';
 
 abstract class ExampleUseCase {
   int example(int i);
