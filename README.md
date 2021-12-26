@@ -8,10 +8,8 @@ Generate Flutter [mockito](https://pub.dev/packages/mockito) mocks and mock meth
 This package depends on [`mockito_builder_annotations`](https://pub.dev/packages/mockito_builder_annotations)
 
 ```yaml
-dependencies:
-  mockito_builder_annotations: ^0.3.0
 dev_dependencies:
-  mockito_builder: ^0.3.0
+  mockito_builder: ^0.4.0
 
 ```
 
