@@ -6,7 +6,7 @@ import 'package:mockito/annotations.dart';
 import 'example.mocks.dart';
 import 'package:mockito_builder/annotations.dart';
 
-part 'example.g.dart';
+part 'example.mock_builder.dart';
 
 abstract class ExampleUseCase {
   int example(int i);

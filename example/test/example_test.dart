@@ -3,7 +3,7 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'example_test.mocks.dart';
 import 'package:mockito_builder/annotations.dart';
-part 'example_test.g.dart';
+part 'example_test.mock_builder.dart';
 
 abstract class ExampleUseCase {
   int example(int i);
