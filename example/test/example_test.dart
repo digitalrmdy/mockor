@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:mockito_builder_annotations/mockito_builder_annotations.dart';
 import 'package:mockito/annotations.dart';
 import 'example_test.mocks.dart';
+import 'package:mockito_builder/annotations.dart';
 part 'example_test.g.dart';
 
 abstract class ExampleUseCase {

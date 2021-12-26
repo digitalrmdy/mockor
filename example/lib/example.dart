@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'example.mocks.dart';
-import 'package:mockito_builder_annotations/mockito_builder_annotations.dart';
+import 'package:mockito_builder/annotations.dart';
 
 part 'example.g.dart';
 

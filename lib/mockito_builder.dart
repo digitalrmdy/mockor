@@ -1,1 +1,0 @@
-library mockito_builder;

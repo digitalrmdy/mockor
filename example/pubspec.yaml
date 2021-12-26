@@ -6,7 +6,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  mockito_builder_annotations: ^0.3.0
   analyzer: '>=1.7.0 <4.0.0'
 
 
@@ -20,8 +19,6 @@ dev_dependencies:
 dependency_overrides:
   mockito_builder:
     path: ../
-  mockito_builder_annotations:
-    path: ../annotations
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
