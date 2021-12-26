@@ -1,19 +1,25 @@
 ///container for [type] that needs to be generated
 class MockDef {
   final String type;
-  final MockDefSource mockDefSource;
+  final MockDefNaming mockDefNaming;
+  final bool generateExtension;
 
-  const MockDef({required this.type, required this.mockDefSource});
+  const MockDef(
+      {required this.type,
+      required this.mockDefNaming,
+      required this.generateExtension});
 
-  ///the name of the class based on the [type] which mockito generates
-  String get _targetClassNameMockito => "Mock$type";
+  String _buildTarget(String prefix) {
+    var s = "";
+    if (mockDefNaming == MockDefNaming.INTERNAL) {
+      s += "_\$";
+    }
+    s += "$prefix$type";
+    return s;
+  }
 
-  ///the name of the class based on the [type] which we generate if needed
-  String get _targetClassNameInternal => "_\$Mock$type";
-
-  String get targetClassName => mockDefSource == MockDefSource.INTERNAL
-      ? _targetClassNameInternal
-      : _targetClassNameMockito;
+  String get targetMockClassName => _buildTarget(_prefixMock);
+  String get targetMockClassNameRelaxed => '${targetMockClassName}Relaxed';
 
   @override
   bool operator ==(Object other) =>
@@ -34,20 +40,21 @@ class MockitoConfig {
   ///unique set of types to create mock classes for
   final Set<MockDef> mockDefs;
 
-  final bool generateMockExtensions;
+  final bool generateMockitoAnnotation;
 
-  MockitoConfig({
-    required this.mockDefs,
-    required this.mockerName,
-    required this.generateMockExtensions,
-  });
+  MockitoConfig(
+      {required this.mockDefs,
+      required this.mockerName,
+      required this.generateMockitoAnnotation});
 
   List<MockDef> get mockDefsToGenerate => mockDefs
-      .where((element) => element.mockDefSource == MockDefSource.INTERNAL)
+      .where((element) => element.mockDefNaming == MockDefNaming.INTERNAL)
       .toList();
   List<MockDef> get mockDefsMockitoGenerated => mockDefs
-      .where((element) => element.mockDefSource == MockDefSource.MOCKITO)
+      .where((element) => element.mockDefNaming == MockDefNaming.MOCKITO)
       .toList();
 }
 
-enum MockDefSource { MOCKITO, INTERNAL }
+enum MockDefNaming { MOCKITO, INTERNAL }
+
+const _prefixMock = "Mock";

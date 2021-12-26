@@ -11,7 +11,5 @@ abstract class ExampleUseCase2 {
   void example2();
 }
 
-const List<Type> _types = [ExampleUseCase, ExampleUseCase2];
-@GenerateMocker(_types)
-@GenerateMocks(_types)
+@GenerateMocker([ExampleUseCase, ExampleUseCase2])
 T mock<T>() => _$mock<T>();

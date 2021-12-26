@@ -10,23 +10,22 @@ class MockitoDartBuilder {
       (b) {
         b
           ..body.addAll(
-              mockitoConfig.mockDefsToGenerate.map(buildMockitoClass).toList())
-          ..body.add(buildMockerMethod(mockitoConfig));
-        if (mockitoConfig.generateMockExtensions) {
-          b.body.addAll(mockitoConfig.mockDefsMockitoGenerated
+              mockitoConfig.mockDefsToGenerate.map(_buildMockClass).toList())
+          ..body.add(buildMockerMethod(mockitoConfig))
+          ..body.addAll(mockitoConfig.mockDefs
+              .where((element) => element.generateExtension)
               .map(buildAsMockExtension)
               .toList());
-        }
       },
     );
     final emitter = DartEmitter();
     return DartFormatter().format('${lib.accept(emitter)}');
   }
 
-  Class buildMockitoClass(MockDef mockitoDef) {
-    assert(mockitoDef.mockDefSource == MockDefSource.INTERNAL);
+  Class _buildMockClass(MockDef mockitoDef) {
+    assert(mockitoDef.mockDefNaming == MockDefNaming.INTERNAL);
     return Class((b) => b
-      ..name = mockitoDef.targetClassName
+      ..name = mockitoDef.targetMockClassName
       ..extend = refer("Mock")
       ..implements.add(refer(mockitoDef.type)));
   }
@@ -38,12 +37,12 @@ Navigate to the \'$mockerName\' method and add the type to the types list in the
 Finally run the build command: \'flutter packages pub run build_runner build\'.''';
   }
 
-  Block createSwitchStatement(MockitoConfig mockitoConfig) {
+  Block _createSwitchStatement(MockitoConfig mockitoConfig) {
     final list = <Code>[];
     list.add(Code("switch(T) {"));
     mockitoConfig.mockDefs.forEach((mockDef) {
       list.add(Code("case ${mockDef.type}:"));
-      list.add(Code("return ${mockDef.targetClassName}();"));
+      list.add(Code("return ${mockDef.targetMockClassName}();"));
     });
     list.add(Code(
         "default: throw UnimplementedError(\'\'\'${createUnimplementedErrorMessage(mockitoConfig)}\'\'\');"));
@@ -51,23 +50,37 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
     return Block.of(list);
   }
 
+  Expression _buildGenerateMocksAnnotation(MockitoConfig mockitoConfig) {
+    final mockDefs = mockitoConfig.mockDefsMockitoGenerated;
+    final typesJoined = mockDefs.map((e) => e.type).join(",");
+    var code = "";
+    code += "GenerateMocks([$typesJoined])";
+    return CodeExpression(Code(code));
+  }
+
   Method buildMockerMethod(MockitoConfig mockitoConfig) {
     final name = mockitoConfig.mockerName;
-    return Method((b) => b
-      ..name = "_\$$name"
-      ..returns = refer('dynamic')
-      ..types.add(refer("T"))
-      ..body = createSwitchStatement(mockitoConfig));
+    return Method((b) {
+      if (mockitoConfig.generateMockitoAnnotation) {
+        b.annotations.add(_buildGenerateMocksAnnotation(mockitoConfig));
+      }
+      b
+        ..name = "_\$$name"
+        ..returns = refer('dynamic')
+        ..types.add(refer("T"))
+        ..body = _createSwitchStatement(mockitoConfig);
+    });
   }
 
   Extension buildAsMockExtension(MockDef mockDef) {
-    return Extension((b) => b
-      ..name = "${mockDef.targetClassName}Extension"
+    final asMockMethod = Method((_) => _
+      ..name = "asMock"
+      ..lambda = true
+      ..returns = refer(mockDef.targetMockClassName)
+      ..body = Code("this as ${mockDef.targetMockClassName}"));
+    return Extension((_) => _
+      ..name = "${mockDef.targetMockClassName}Extension"
       ..on = refer(mockDef.type)
-      ..methods.add(Method((b) => b
-        ..name = "asMock"
-        ..lambda = true
-        ..returns = refer(mockDef.targetClassName)
-        ..body = Code("this as ${mockDef.targetClassName}"))));
+      ..methods.addAll([asMockMethod]));
   }
 }

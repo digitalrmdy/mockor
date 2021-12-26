@@ -11,8 +11,7 @@ builders:
   mockito_builder:
     import: "package:mockito_builder/builder.dart"
     builder_factories: ["mockitoBuilder"]
-    build_extensions: {".dart": ["mockito_builder.g.part"]}
+    build_extensions: {".dart": [".g.dart"]}
     auto_apply: dependents
-    build_to: cache
-    applies_builders: ["source_gen|combining_builder"]
-    runs_before: ["mockito|mockitoBuilder"]
+    build_to: source
+    runs_before: ["mockito|mockBuilder"]

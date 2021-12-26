@@ -32,7 +32,7 @@ class MockitoGenerator extends GeneratorForAnnotation<GenerateMocker> {
     try {
       final generatorConfig = getGeneratorConfig(annotation, element);
       if (generatorConfig != null) {
-        final mockitoConfig = MockitoConfigFactory(generatorConfig).create();
+        final mockitoConfig = generatorConfig.createMocktioConfig();
         final dartBuilder = MockitoDartBuilder();
         return dartBuilder.buildDartFile(mockitoConfig);
       }
@@ -43,26 +43,33 @@ class MockitoGenerator extends GeneratorForAnnotation<GenerateMocker> {
     return null;
   }
 
-  void error(String message) {
-    throw MockitoGeneratorException(message);
+  void _validateGenerateMocker(GenerateMocker generateMocker) {
+    if (generateMocker.generateMockitoAnnotation &&
+        !generateMocker.useMockitoGeneratedTypes) {
+      _error(
+          "if generateMockitoAnnotation is true then useMockitoGeneratedTypes must be true");
+    }
   }
 
   GeneratorConfig? getGeneratorConfig(
       ConstantReader annotation, Element element) {
     if (element is FunctionElement) {
       final types = readDartTypesParam(annotation, 'types');
-      final typesMockitoGenerated =
-          readDartTypesParam(annotation, 'mockitoGeneratedTypes');
-      final generateMockExtensions =
-          readParam(annotation, 'generateMockExtensions').boolValue;
+      final generateMocker = GenerateMocker([],
+          generateMockitoAnnotation:
+              readParam(annotation, 'generateMockitoAnnotation').boolValue,
+          generateMockExtensions:
+              readParam(annotation, 'generateMockExtensions').boolValue,
+          useMockitoGeneratedTypes:
+              readParam(annotation, 'useMockitoGeneratedTypes').boolValue);
+      _validateGenerateMocker(generateMocker);
       return GeneratorConfig(
         types: types,
         mockerFunction: element,
-        generateMockExtensions: generateMockExtensions,
-        typesMockitoGenerated: typesMockitoGenerated,
+        generateMocker: generateMocker,
       );
     } else {
-      error('mocker must be a function!');
+      _error('mocker must be a function!');
     }
     return null;
   }
@@ -70,49 +77,29 @@ class MockitoGenerator extends GeneratorForAnnotation<GenerateMocker> {
 
 ///Config with mocker function and the types that need mock implementations
 class GeneratorConfig {
+  final GenerateMocker generateMocker;
   final List<DartType> types;
-  final List<DartType> typesMockitoGenerated;
   final FunctionElement mockerFunction;
-  final bool generateMockExtensions;
 
-  GeneratorConfig(
-      {required this.types,
-      required this.typesMockitoGenerated,
-      required this.mockerFunction,
-      required this.generateMockExtensions});
-}
-
-///a factory for generating [MockDef] validated instances
-class MockitoConfigFactory {
-  final GeneratorConfig generatorConfig;
-
-  MockitoConfigFactory(this.generatorConfig);
-
-  void validateType(DartType dartType) {
-    final lib = dartType.element?.library;
-    lib!;
-    assert(!lib.isDartAsync);
-    assert(!lib.isDartCore);
-  }
-
-  MockDef _toMockDef(DartType dartType, MockDefSource mockDefSource) {
-    validateType(dartType);
-    return MockDef(
-        type: dartType.getDisplayString(withNullability: false),
-        mockDefSource: mockDefSource);
-  }
-
-  MockitoConfig create() {
-    final typesToGenerate = generatorConfig.types
-        .map((t) => _toMockDef(t, MockDefSource.INTERNAL))
-        .toList();
-    final typesMockitoGenerated = generatorConfig.typesMockitoGenerated
-        .map((t) => _toMockDef(t, MockDefSource.MOCKITO))
-        .toList();
+  GeneratorConfig({
+    required this.types,
+    required this.generateMocker,
+    required this.mockerFunction,
+  });
+  MockitoConfig createMocktioConfig() {
+    final mockDefs = types
+        .map((t) => MockDef(
+              mockDefNaming: generateMocker.useMockitoGeneratedTypes
+                  ? MockDefNaming.MOCKITO
+                  : MockDefNaming.INTERNAL,
+              generateExtension: generateMocker.generateMockExtensions,
+              type: t.getDisplayString(withNullability: false),
+            ))
+        .toSet();
     return MockitoConfig(
-      mockerName: generatorConfig.mockerFunction.name,
-      generateMockExtensions: generatorConfig.generateMockExtensions,
-      mockDefs: (typesToGenerate + typesMockitoGenerated).toSet(),
+      mockerName: mockerFunction.name,
+      generateMockitoAnnotation: generateMocker.generateMockitoAnnotation,
+      mockDefs: mockDefs,
     );
   }
 }
@@ -125,19 +112,26 @@ extension<T> on List<T?> {
   }
 }
 
+void _validateDartType(DartType dartType) {
+  final lib = dartType.element?.library;
+  lib!;
+  assert(!lib.isDartAsync);
+  assert(!lib.isDartCore);
+}
+
 extension on List<DartType?> {
   List<DartType> nonNullUniqueDartTypesOrThrow(
       {required String attributeName}) {
-    forEachIndexed((i, item) {
-      if (item == null) {
-        throw MockitoGeneratorException(
-            '$DartType at $i in $attributeName cannot be determined');
+    forEachIndexed((i, type) {
+      if (type == null) {
+        _error('$DartType at $i in $attributeName cannot be determined');
+      } else {
+        _validateDartType(type);
       }
     });
 
     if (toSet().length != length) {
-      throw MockitoGeneratorException(
-          "Some types were specified twice in '$attributeName'!");
+      _error("Some types were specified twice in '$attributeName'!");
     }
 
     return where((element) => element != null).cast<DartType>().toList();
@@ -154,4 +148,8 @@ class MockitoGeneratorException implements Exception {
   String toString() {
     return '$runtimeType: $cause';
   }
+}
+
+void _error(String message) {
+  throw MockitoGeneratorException(message);
 }

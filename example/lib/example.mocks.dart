@@ -28,3 +28,18 @@ class MockExampleUseCase extends _i1.Mock implements _i2.ExampleUseCase {
   @override
   String toString() => super.toString();
 }
+
+/// A class which mocks [ExampleUseCase2].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockExampleUseCase2 extends _i1.Mock implements _i2.ExampleUseCase2 {
+  MockExampleUseCase2() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  void example2() => super.noSuchMethod(Invocation.method(#example2, []),
+      returnValueForMissingStub: null);
+  @override
+  String toString() => super.toString();
+}

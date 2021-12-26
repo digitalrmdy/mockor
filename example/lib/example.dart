@@ -32,12 +32,10 @@ class ExampleUseCase2Impl implements ExampleUseCase2 {
   }
 }
 
-const List<Type> _mockitoGeneratedTypes = [ExampleUseCase];
-@GenerateMocker(
-  [ExampleUseCase2],
-  mockitoGeneratedTypes: _mockitoGeneratedTypes,
-)
-@GenerateMocks(_mockitoGeneratedTypes)
+@GenerateMocker([
+  ExampleUseCase,
+  ExampleUseCase2,
+])
 T mock<T>() => _$mock<T>();
 
 class ExampleUseCase3 {}
