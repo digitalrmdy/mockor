@@ -2,6 +2,7 @@
 
 * Null safety
 * Support Mockito's own code generator
+* Include annotations in main module
 * Fix README hyperlink
 
 ## 0.2.2
