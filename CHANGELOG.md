@@ -1,8 +1,11 @@
-## 0.2.2
+## 0.2.3
 
-* Update documentation
-* Improve analyzer compatibility with different versions
-* Improve code_builder compatibility
+* Fix readme hyperlink typo
+
+### Important notice
+
+`mockito_builder` has been renamed to `mockor`.
+Please migrate to the [new package](https://pub.dev/packages/mockor).
 
 ## 0.2.1
 

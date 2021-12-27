@@ -1,6 +1,6 @@
 name: mockito_builder_annotations
 description: Defines the annotations used by `mockito_builder` to generate `mockito` classes.
-version: 0.2.2
+version: 0.2.3
 homepage: https://rmdy.be
 
 environment:

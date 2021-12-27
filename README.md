@@ -1,5 +1,8 @@
 [![Pub Package](https://img.shields.io/pub/v/mockito_builder.svg)](https://pub.dev/packages/mockito_builder)
 
+## Important Notice
+This package has been renamed to `mockor`. Please migrate to the [new package](https://pub.dev/packages/mockor).
+
 Generate Flutter [mockito](https://pub.dev/packages/mockito) mocks and mock method with a list of types to be mocked.
 
 ## Getting Started
@@ -16,7 +19,7 @@ dev_dependencies:
 
 ```
 
-### Add a `mocker.dart` file in your test folder and a mock method with a [`@GenerateMocker`](https://pub.dev/packages/mocktio_builder_annotations) annotation. Don't forget to import [mockito](https://pub.dev/packages/mockito) here.
+### Add a `mocker.dart` file in your test folder and a mock method with a [`@GenerateMocker`](https://pub.dev/packages/mockito_builder_annotations) annotation. Don't forget to import [mockito](https://pub.dev/packages/mockito) here.
 
 
 ```dart
