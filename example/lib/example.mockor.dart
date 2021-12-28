@@ -9,7 +9,7 @@ part of example;
 // **************************************************************************
 
 @GenerateMocks([ExampleUseCase, ExampleUseCase2])
-dynamic _$mock<T>() {
+dynamic _$mock<T extends Object>() {
   switch (T) {
     case ExampleUseCase:
       return MockExampleUseCase();
@@ -23,10 +23,10 @@ Finally run the build command: 'flutter packages pub run build_runner build'.'''
   }
 }
 
-extension MockExampleUseCaseExtension on ExampleUseCase {
+extension ExampleUseCaseAsMockExtension on ExampleUseCase {
   MockExampleUseCase asMock() => this as MockExampleUseCase;
 }
 
-extension MockExampleUseCase2Extension on ExampleUseCase2 {
+extension ExampleUseCase2AsMockExtension on ExampleUseCase2 {
   MockExampleUseCase2 asMock() => this as MockExampleUseCase2;
 }

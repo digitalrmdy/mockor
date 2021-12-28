@@ -23,8 +23,8 @@ class MockExampleUseCase extends _i1.Mock implements _i2.ExampleUseCase {
   }
 
   @override
-  int example(int? i) =>
-      (super.noSuchMethod(Invocation.method(#example, [i]), returnValue: 0)
+  int example(_i2.ExampleModel? model) =>
+      (super.noSuchMethod(Invocation.method(#example, [model]), returnValue: 0)
           as int);
   @override
   String toString() => super.toString();
@@ -41,54 +41,6 @@ class MockExampleUseCase2 extends _i1.Mock implements _i2.ExampleUseCase2 {
   @override
   void example2() => super.noSuchMethod(Invocation.method(#example2, []),
       returnValueForMissingStub: null);
-  @override
-  String toString() => super.toString();
-}
-
-/// A class which mocks [ExampleUseCase4].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockExampleUseCase4 extends _i1.Mock implements _i2.ExampleUseCase4 {
-  MockExampleUseCase4() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  String toString() => super.toString();
-}
-
-/// A class which mocks [ExampleUseCase5].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockExampleUseCase5 extends _i1.Mock implements _i2.ExampleUseCase5 {
-  MockExampleUseCase5() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  String toString() => super.toString();
-}
-
-/// A class which mocks [ExampleUseCase6].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockExampleUseCase6 extends _i1.Mock implements _i2.ExampleUseCase6 {
-  MockExampleUseCase6() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  String toString() => super.toString();
-}
-
-/// A class which mocks [ExampleUseCase7].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockExampleUseCase7 extends _i1.Mock implements _i2.ExampleUseCase7 {
-  MockExampleUseCase7() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   String toString() => super.toString();
 }

@@ -5,7 +5,13 @@ part 'mocker_mocktail.mockor.dart';
 
 abstract class MockerMocktailUseCase {
   int test(int i);
+  _Model test2(_Model model);
+  _Model2 test3(_Model2 model);
 }
+
+class _Model {}
+
+class _Model2 {}
 
 @GenerateMocker(
   [MockerMocktailUseCase],
@@ -13,15 +19,29 @@ abstract class MockerMocktailUseCase {
   generateMockitoAnnotation: false,
   useMockitoGeneratedTypes: false,
 )
-T _mock<T>() => _$_mock<T>();
+T _mock<T extends Object>() => _$_mock<T>();
 
 void main() {
   late MockerMocktailUseCase useCase;
   setUp(() {
     useCase = _mock();
+    registerFallbackValue(_Model2());
   });
-  test("mocktail test", () {
+  test("`when` with any() doesn't crash and works as expected", () {
     when(() => useCase.test(any())).thenReturn(1);
     expect(useCase.test(2), 1);
+  });
+  test("any() with custom class doesn't work without registerFallbackValue",
+      () {
+    final model = _Model();
+    try {
+      when(() => useCase.test2(any())).thenReturn(model);
+      fail("expected exception");
+    } catch (ex) {}
+  });
+  test("any() with custom class works with registerFallbackValue", () {
+    final model = _Model2();
+    when(() => useCase.test3(any())).thenReturn(model);
+    expect(useCase.test3(_Model2()), model);
   });
 }

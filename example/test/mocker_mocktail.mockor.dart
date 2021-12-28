@@ -11,7 +11,7 @@ part of 'mocker_mocktail.dart';
 class _$MockMockerMocktailUseCase extends Mock
     implements MockerMocktailUseCase {}
 
-dynamic _$_mock<T>() {
+dynamic _$_mock<T extends Object>() {
   switch (T) {
     case MockerMocktailUseCase:
       return _$MockMockerMocktailUseCase();

@@ -8,7 +8,7 @@ part of 'mocker_with_custom_mockito_annotation.dart';
 // MockerGenerator
 // **************************************************************************
 
-dynamic _$_mock<T>() {
+dynamic _$_mock<T extends Object>() {
   switch (T) {
     case MockerWithCustomMockitoUseCase:
       return MockMockerWithCustomMockitoUseCase();
@@ -20,7 +20,7 @@ Finally run the build command: 'flutter packages pub run build_runner build'.'''
   }
 }
 
-extension MockMockerWithCustomMockitoUseCaseExtension
+extension MockerWithCustomMockitoUseCaseAsMockExtension
     on MockerWithCustomMockitoUseCase {
   MockMockerWithCustomMockitoUseCase asMock() =>
       this as MockMockerWithCustomMockitoUseCase;

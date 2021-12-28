@@ -6,48 +6,22 @@ import 'package:mockor/annotations.dart';
 part 'example_test.mockor.dart';
 
 abstract class ExampleUseCase {
-  int example(int i);
-
-  factory ExampleUseCase() => ExampleUseCaseImpl();
+  int example(ExampleModel model);
 }
 
-class ExampleUseCaseImpl implements ExampleUseCase {
-  @override
-  int example(int i) => 1;
-}
+class ExampleModel {}
 
 abstract class ExampleUseCase2 {
   void example2();
-
-  factory ExampleUseCase2() => ExampleUseCase2Impl();
-}
-
-class ExampleUseCase2Impl implements ExampleUseCase2 {
-  @override
-  void example2() {
-    print('example2');
-  }
 }
 
 class ExampleUseCase3 {}
 
-class ExampleUseCase4 {}
-
-class ExampleUseCase5 {}
-
-class ExampleUseCase6 {}
-
-class ExampleUseCase7 {}
-
 @GenerateMocker([
   ExampleUseCase,
   ExampleUseCase2,
-  ExampleUseCase4,
-  ExampleUseCase5,
-  ExampleUseCase6,
-  ExampleUseCase7,
 ])
-T _mock<T>() => _$_mock<T>();
+T _mock<T extends Object>() => _$_mock<T>();
 void main() {
   late ExampleUseCase exampleUseCase;
   late ExampleUseCase2 exampleUseCase2;
@@ -72,7 +46,7 @@ void main() {
      * Please read the [NULL_SAFETY_README](https://github.com/dart-lang/mockito/blob/master/NULL_SAFETY_README.md) for more info.
      */
     when(exampleUseCase.asMock().example(any)).thenReturn(2);
-    expect(exampleUseCase.example(1), 2);
+    expect(exampleUseCase.example(ExampleModel()), 2);
   });
 
   test('throw unimplemented error when mock class not generated', () {

@@ -37,8 +37,9 @@ Navigate to the \'$mockerName\' method and add the type to the types list in the
 Finally run the build command: \'flutter packages pub run build_runner build\'.''';
   }
 
-  Block _createSwitchStatement(MockerConfig mockitoConfig) {
+  Block _createMockerMethodBody(MockerConfig mockitoConfig) {
     final list = <Code>[];
+    // switch statement
     list.add(Code("switch(T) {"));
     mockitoConfig.mockDefs.forEach((mockDef) {
       list.add(Code("case ${mockDef.type}:"));
@@ -67,8 +68,8 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
       b
         ..name = "_\$$name"
         ..returns = refer('dynamic')
-        ..types.add(refer("T"))
-        ..body = _createSwitchStatement(mockitoConfig);
+        ..types.add(refer("T extends Object"))
+        ..body = _createMockerMethodBody(mockitoConfig);
     });
   }
 

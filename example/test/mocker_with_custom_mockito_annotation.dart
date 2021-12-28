@@ -16,7 +16,7 @@ abstract class MockerWithCustomMockitoUseCase2 {
     generateMockitoAnnotation: false)
 @GenerateMocks(
     [MockerWithCustomMockitoUseCase, MockerWithCustomMockitoUseCase2])
-T _mock<T>() => _$_mock<T>();
+T _mock<T extends Object>() => _$_mock<T>();
 
 void main() {
   test(
