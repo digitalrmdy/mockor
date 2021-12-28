@@ -79,7 +79,7 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
       ..returns = refer(mockDef.targetMockClassName)
       ..body = Code("this as ${mockDef.targetMockClassName}"));
     return Extension((_) => _
-      ..name = "${mockDef.targetMockClassName}Extension"
+      ..name = "${mockDef.type}AsMockExtension"
       ..on = refer(mockDef.type)
       ..methods.addAll([asMockMethod]));
   }

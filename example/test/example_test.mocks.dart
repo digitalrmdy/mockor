@@ -2,8 +2,6 @@
 // in example/test/example_test.dart.
 // Do not manually edit this file.
 
-import 'dart:async' as _i3;
-
 import 'package:mockito/mockito.dart' as _i1;
 
 import 'example_test.dart' as _i2;
@@ -28,18 +26,6 @@ class MockExampleUseCase extends _i1.Mock implements _i2.ExampleUseCase {
   int example(int? i) =>
       (super.noSuchMethod(Invocation.method(#example, [i]), returnValue: 0)
           as int);
-  @override
-  _i3.Future<int> exampleAsync() =>
-      (super.noSuchMethod(Invocation.method(#exampleAsync, []),
-          returnValue: Future<int>.value(0)) as _i3.Future<int>);
-  @override
-  void exampleVoid() => super.noSuchMethod(Invocation.method(#exampleVoid, []),
-      returnValueForMissingStub: null);
-  @override
-  _i3.Future<void> exampleVoidAsync() =>
-      (super.noSuchMethod(Invocation.method(#exampleVoidAsync, []),
-          returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i3.Future<void>);
   @override
   String toString() => super.toString();
 }

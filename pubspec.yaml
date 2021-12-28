@@ -1,6 +1,6 @@
 name: mockor
-description: Generate Flutter `mockito` mocks and mock method with a list of types to be mocked.
-version: 0.4.0
+description: Generic mocker method generator for `mockito`
+version: 1.0.0
 homepage: https://rmdy.be
 
 environment:

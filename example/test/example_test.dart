@@ -8,36 +8,12 @@ part 'example_test.mockor.dart';
 abstract class ExampleUseCase {
   int example(int i);
 
-  Future<int> exampleAsync();
-
-  void exampleVoid();
-
-  int? exampleNullable();
-
-  Future<void> exampleVoidAsync();
-
   factory ExampleUseCase() => ExampleUseCaseImpl();
 }
 
 class ExampleUseCaseImpl implements ExampleUseCase {
   @override
   int example(int i) => 1;
-
-  @override
-  Future<int> exampleAsync() async {
-    return 2;
-  }
-
-  @override
-  void exampleVoid() {}
-
-  @override
-  Future<void> exampleVoidAsync() async {}
-
-  @override
-  int? exampleNullable() {
-    return 1;
-  }
 }
 
 abstract class ExampleUseCase2 {
@@ -77,25 +53,31 @@ void main() {
   late ExampleUseCase2 exampleUseCase2;
 
   setUp(() {
+    // this will return [MockExampleUseCase]
     exampleUseCase = _mock();
     exampleUseCase2 = _mock();
   });
-  test('test 2 different example use cases', () async {
-    expect(exampleUseCase, isNotNull);
-    expect(exampleUseCase2, isNotNull);
-    when(exampleUseCase.asMock().example(any)).thenReturn(2);
+  test("given example2 throws an exception then don't catch it", () {
     when(exampleUseCase2.example2()).thenThrow(Exception());
-    expect(exampleUseCase.example(1), 2);
     try {
       exampleUseCase2.example2();
       fail('expected exception');
     } on Exception {}
   });
+  test('given example with any param returns 2 then return 2', () {
+    /**
+     * by default an `asMock` extension method will be generated.
+     * Which returns the mocked type.
+     * Due to null safety we can only use the [any] matcher on non null params when using mock type.
+     * Please read the [NULL_SAFETY_README](https://github.com/dart-lang/mockito/blob/master/NULL_SAFETY_README.md) for more info.
+     */
+    when(exampleUseCase.asMock().example(any)).thenReturn(2);
+    expect(exampleUseCase.example(1), 2);
+  });
 
   test('throw unimplemented error when mock class not generated', () {
     try {
-      // ignore: unused_local_variable
-      ExampleUseCase3 exampleUseCase3 = _mock();
+      _mock<ExampleUseCase3>();
       fail("expected an exception");
     } on UnimplementedError catch (e) {
       print(e.message);
