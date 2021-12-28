@@ -114,9 +114,15 @@ when(useCase.asMock().example(any)).thenReturn(1)
 ``` 
 Please read Mockito's [Null Safety README](https://github.com/dart-lang/mockito/blob/master/NULL_SAFETY_README.md) for more info.
 ## Advantage over vanilla Mocktail
-The main selling point of vanilla Mocktail is that code generation is not required.
-Here code generation is required but only for the one file with the generic mock function.
-There's no dependency to generated code in any of your tests. And each mock class is only 1 line.
+### Fast Code Generation
+Even though Mocktail was created to avoid code generation, here code generation is required but only for the one file with the generic mock function.
+There's no dependency to generated code in any of your tests. And each mock class is only 1 line long.
+### Private Mock classes
+The generated mock classes are private so cannot be imported. Simply call the global `mock` method. This makes it easier for all developers to follow consistent code conventions.
+### Generate `registerFallbackValues` function
+An annoying drawback of mocktail is that you need to register fallback values if you want to call the `any()` function on them.
+With Mockor, you can generate a `registerFallbackValues` function where you only need to specify the types. 
+In future versions, the fallback value types could be detected automatically by going over all the functions of the mocker classes. 
 
 ## FAQ
 ### How can I hide the generated mock classes from auto import?

@@ -29,14 +29,20 @@ class GenerateMocker {
   /// **true** by default
   final bool generateMockExtensions;
 
-  /// **false** by default
-  final bool generateMocktailFallback;
+  /// null by default
+  final GenerateMocktailFallbackValues? generateMocktailFallbackValues;
 
   const GenerateMocker(
     this.types, {
     this.useMockitoGeneratedTypes = true,
     this.generateMockitoAnnotation = true,
     this.generateMockExtensions = true,
-    this.generateMocktailFallback = false,
+    this.generateMocktailFallbackValues,
   });
+}
+
+class GenerateMocktailFallbackValues {
+  final List<Type> types;
+
+  const GenerateMocktailFallbackValues(this.types);
 }

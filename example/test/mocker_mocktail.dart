@@ -13,19 +13,24 @@ class _Model {}
 
 class _Model2 {}
 
-@GenerateMocker(
-  [MockerMocktailUseCase],
-  generateMockExtensions: false,
-  generateMockitoAnnotation: false,
-  useMockitoGeneratedTypes: false,
-)
+@GenerateMocker([MockerMocktailUseCase],
+    generateMockExtensions: false,
+    generateMockitoAnnotation: false,
+    useMockitoGeneratedTypes: false,
+    generateMocktailFallbackValues: GenerateMocktailFallbackValues([_Model2]))
 T _mock<T extends Object>() => _$_mock<T>();
+
+void registerFallbackValuesAll() {
+  _$registerFallbackValues();
+}
 
 void main() {
   late MockerMocktailUseCase useCase;
+  setUpAll(() {
+    registerFallbackValuesAll();
+  });
   setUp(() {
     useCase = _mock();
-    registerFallbackValue(_Model2());
   });
   test("`when` with any() doesn't crash and works as expected", () {
     when(() => useCase.test(any())).thenReturn(1);

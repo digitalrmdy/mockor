@@ -8,9 +8,6 @@ part of 'mocker_mocktail.dart';
 // MockerGenerator
 // **************************************************************************
 
-class _$MockMockerMocktailUseCase extends Mock
-    implements MockerMocktailUseCase {}
-
 dynamic _$_mock<T extends Object>() {
   switch (T) {
     case MockerMocktailUseCase:
@@ -22,3 +19,12 @@ Navigate to the '_mock' method and add the type to the types list in the 'Genera
 Finally run the build command: 'flutter packages pub run build_runner build'.''');
   }
 }
+
+class _$MockMockerMocktailUseCase extends Mock
+    implements MockerMocktailUseCase {}
+
+void _$registerFallbackValues() {
+  registerFallbackValue(_$Mock_Model2());
+}
+
+class _$Mock_Model2 extends Mock implements _Model2 {}

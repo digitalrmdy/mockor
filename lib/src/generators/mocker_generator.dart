@@ -1,3 +1,4 @@
+import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
@@ -18,27 +19,34 @@ class MockerGenerator extends GeneratorForAnnotation<GenerateMocker> {
     return reader;
   }
 
-  Future<List<ResolvedType>> readDartTypesParam(
-      ConstantReader annotation, FunctionElement mockerFunction) {
-    final importAliasTable = _ImportAliasTable.fromElement(mockerFunction);
+  DartObject? readParamInsideNestedObject(
+      ConstantReader annotation, String parameter, String nestedParameter) {
+    final reader = annotation.read(parameter);
+    if (reader.isNull) {
+      return null;
+    }
+    return reader.objectValue.getField(nestedParameter);
+  }
 
+  Future<List<ResolvedType>> readDartTypesParam(
+      ConstantReader annotation, _ImportAliasTable importAliasTable) {
     return readParam(annotation, "types")
         .listValue
         .map((x) => x.toTypeValue())
         .toList()
-        .nonNullUniqueDartTypesOrThrow(importAliasTable);
+        .nonNullUniqueDartTypesOrThrow(importAliasTable,
+            attributeName: "$GenerateMocker.types");
   }
 
   @override
   Future<String?> generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) async {
     try {
-      final generatorConfig =
-          await getGeneratorConfig(annotation, element, buildStep);
-      if (generatorConfig != null) {
-        final mockitoConfig = generatorConfig.createMockerConfig();
+      final mockorConfig =
+          await createMockorConfig(annotation, element, buildStep);
+      if (mockorConfig != null) {
         final dartBuilder = MockerDartBuilder();
-        return dartBuilder.buildDartFile(mockitoConfig);
+        return dartBuilder.buildDartFile(mockorConfig);
       }
     } catch (e, s) {
       throw Exception("$e, $s");
@@ -55,63 +63,61 @@ class MockerGenerator extends GeneratorForAnnotation<GenerateMocker> {
     }
   }
 
-  Future<GeneratorConfig?> getGeneratorConfig(
+  Future<MockorConfig?> createMockorConfig(
       ConstantReader annotation, Element element, BuildStep buildStep) async {
     if (element is FunctionElement) {
       final mockerFunction = element;
-      final types = await readDartTypesParam(annotation, mockerFunction);
-      final generateMocker = GenerateMocker(
-        [],
-        generateMockitoAnnotation:
-            readParam(annotation, 'generateMockitoAnnotation').boolValue,
-        generateMockExtensions:
-            readParam(annotation, 'generateMockExtensions').boolValue,
-        useMockitoGeneratedTypes:
-            readParam(annotation, 'useMockitoGeneratedTypes').boolValue,
-        generateMocktailFallback:
-            readParam(annotation, 'generateMocktailFallback').boolValue,
+      final importAliasTable = _ImportAliasTable.fromElement(mockerFunction);
+      final types = await readDartTypesParam(annotation, importAliasTable);
+      final generateMocktailFallbackValues = readParamInsideNestedObject(
+        annotation,
+        "generateMocktailFallbackValues",
+        "types",
       );
+      final mocktailFallbackTypes = await generateMocktailFallbackValues
+          ?.toListValue()
+          ?.map((e) => e.toTypeValue())
+          .toList()
+          .nonNullUniqueDartTypesOrThrow(importAliasTable,
+              attributeName: "$GenerateMocktailFallbackValues.types");
+      final generateMocker = GenerateMocker([],
+          generateMockitoAnnotation:
+              readParam(annotation, 'generateMockitoAnnotation').boolValue,
+          generateMockExtensions:
+              readParam(annotation, 'generateMockExtensions').boolValue,
+          useMockitoGeneratedTypes:
+              readParam(annotation, 'useMockitoGeneratedTypes').boolValue,
+          generateMocktailFallbackValues: mocktailFallbackTypes != null
+              ? GenerateMocktailFallbackValues([])
+              : null);
       _validateGenerateMocker(generateMocker);
-      return GeneratorConfig(
-        types: types,
-        mockerFunction: mockerFunction,
-        generateMocker: generateMocker,
-      );
+      final mockDefs = types
+          .map((t) => MockDef(
+                mockDefNaming: generateMocker.useMockitoGeneratedTypes
+                    ? MockDefNaming.MOCKITO
+                    : MockDefNaming.INTERNAL,
+                returnNullOnMissingStub: false,
+                generateExtension: generateMocker.generateMockExtensions,
+                type: t,
+              ))
+          .toSet();
+      final mocktailFallbackMockDefs = mocktailFallbackTypes
+          ?.map((t) => MockDef(
+                mockDefNaming: MockDefNaming.INTERNAL,
+                returnNullOnMissingStub: false,
+                generateExtension: false,
+                type: t,
+              ))
+          .toSet();
+      return MockorConfig(
+          mockerName: mockerFunction.name,
+          generateMockitoAnnotation: generateMocker.generateMockitoAnnotation,
+          mockDefs: mockDefs,
+          mocktailFallbackMockDefs: mocktailFallbackMockDefs);
     } else {
       _error('mocker must be a function!');
     }
     return null;
-  }
-}
-
-///Config with mocker function and the types that need mock implementations
-class GeneratorConfig {
-  final GenerateMocker generateMocker;
-  final List<ResolvedType> types;
-  final FunctionElement mockerFunction;
-
-  GeneratorConfig({
-    required this.types,
-    required this.generateMocker,
-    required this.mockerFunction,
-  });
-
-  MockerConfig createMockerConfig() {
-    final mockDefs = types
-        .map((t) => MockDef(
-              mockDefNaming: generateMocker.useMockitoGeneratedTypes
-                  ? MockDefNaming.MOCKITO
-                  : MockDefNaming.INTERNAL,
-              returnNullOnMissingStub: false,
-              generateExtension: generateMocker.generateMockExtensions,
-              type: t,
-            ))
-        .toSet();
-    return MockerConfig(
-        mockerName: mockerFunction.name,
-        generateMockitoAnnotation: generateMocker.generateMockitoAnnotation,
-        mockDefs: mockDefs,
-        generateMocktailFallback: generateMocker.generateMocktailFallback);
   }
 }
 
@@ -213,20 +219,16 @@ extension on DartType {
 }
 
 class _ImportAliasTable {
-  final Map<String, String> _importAliasMap = {};
+  final Map<String, String> _importAliasMap;
 
-  _ImportAliasTable();
+  _ImportAliasTable(this._importAliasMap);
 
-  String? operator [](String? import) {
+  String? operator [](String import) {
     return _importAliasMap[import];
   }
 
-  void operator []=(String import, String alias) {
-    _importAliasMap[import] = alias;
-  }
-
   factory _ImportAliasTable.fromElement(Element element) {
-    final table = _ImportAliasTable();
+    final table = <String, String>{};
     element.library?.imports.forEach((importElement) {
       final prefix = importElement.prefix?.name;
       if (prefix != null) {
@@ -238,7 +240,7 @@ class _ImportAliasTable {
         table[import] = prefix;
       }
     });
-    return table;
+    return _ImportAliasTable(table);
   }
 
   @override
@@ -249,8 +251,8 @@ class _ImportAliasTable {
 
 extension on List<DartType?> {
   Future<List<ResolvedType>> nonNullUniqueDartTypesOrThrow(
-      _ImportAliasTable importAliasTable) async {
-    print(importAliasTable);
+      _ImportAliasTable importAliasTable,
+      {required String attributeName}) async {
     forEachIndexed((i, type) {
       void errorF(String msg) => _error(
           "Error with type ${type != null ? "`$type`" : ""} at position $i in 'types' argument: $msg");
@@ -263,8 +265,7 @@ extension on List<DartType?> {
     final nonNullDartTypes = where((element) => element != null)
         .cast<DartType>()
         .map((e) => e.toClassName())
-        .toList()
-        .onEachIndexed((i, e) => print("type $i ${e.name} ${e.librarySource}"));
+        .toList();
     final resolvedTypes = nonNullDartTypes
         .map((type) => ResolvedType(
             displayName: type.name,

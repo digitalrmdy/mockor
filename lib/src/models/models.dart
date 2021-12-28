@@ -35,7 +35,7 @@ class MockDef {
 }
 
 ///config for the mocker method
-class MockerConfig {
+class MockorConfig {
   ///name of the mocker method
   final String mockerName;
 
@@ -44,14 +44,16 @@ class MockerConfig {
 
   final bool generateMockitoAnnotation;
 
-  final bool generateMocktailFallback;
+  final Set<MockDef>? mocktailFallbackMockDefs;
 
-  MockerConfig({
+  MockorConfig({
     required this.mockDefs,
     required this.mockerName,
     required this.generateMockitoAnnotation,
-    required this.generateMocktailFallback,
+    required this.mocktailFallbackMockDefs,
   });
+
+  String get registerFallbackValuesName => "registerFallbackValues";
 
   List<MockDef> get mockDefsToGenerate => mockDefs
       .where((element) => element.mockDefNaming == MockDefNaming.INTERNAL)

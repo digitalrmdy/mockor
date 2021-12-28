@@ -5,17 +5,24 @@ import 'package:mockor/src/models/models.dart';
 
 ///Builds Dart code of the mocker function
 class MockerDartBuilder {
-  String buildDartFile(MockerConfig mockitoConfig) {
+  String buildDartFile(MockorConfig mockorConfig) {
     final lib = Library(
       (b) {
         b
+          ..body.add(_buildMockerMethod(mockorConfig))
           ..body.addAll(
-              mockitoConfig.mockDefsToGenerate.map(_buildMockClass).toList())
-          ..body.add(buildMockerMethod(mockitoConfig))
-          ..body.addAll(mockitoConfig.mockDefs
+              mockorConfig.mockDefsToGenerate.map(_buildMockClass).toList())
+          ..body.addAll(mockorConfig.mockDefs
               .where((element) => element.generateExtension)
               .map(buildAsMockExtension)
               .toList());
+        final mocktailFallbackMockDefs = mockorConfig.mocktailFallbackMockDefs;
+        if (mocktailFallbackMockDefs != null) {
+          b
+            ..body.add(_buildRegisterFallbackValuesMethod(mockorConfig))
+            ..body
+                .addAll(mocktailFallbackMockDefs.map(_buildMockClass).toList());
+        }
       },
     );
     final emitter = DartEmitter();
@@ -30,32 +37,32 @@ class MockerDartBuilder {
       ..implements.add(refer(mockitoDef.type.displayNameWithPrefix)));
   }
 
-  String createUnimplementedErrorMessage(MockerConfig mockitoConfig) {
-    final mockerName = mockitoConfig.mockerName;
+  String createUnimplementedErrorMessage(MockorConfig mockorConfig) {
+    final mockerName = mockorConfig.mockerName;
     return '''Error, a mock class for \'\$T\' has not been generated yet.
 Navigate to the \'$mockerName\' method and add the type to the types list in the \'$GenerateMocker\' annotation.
 Finally run the build command: \'flutter packages pub run build_runner build\'.''';
   }
 
-  Block _createMockerMethodBody(MockerConfig mockitoConfig) {
-    final list = <Code>[];
+  Block _createMockerMethodBody(MockorConfig mockorConfig) {
+    final list = <String>[];
     // switch statement
-    list.add(Code("switch(T) {"));
-    mockitoConfig.mockDefs.forEach((mockDef) {
-      list.add(Code("case ${mockDef.type.displayNameWithPrefix}:"));
-      list.add(Code("return ${mockDef.targetMockClassName}();"));
+    list.add("switch(T) {");
+    mockorConfig.mockDefs.forEach((mockDef) {
+      list.add("case ${mockDef.type.displayNameWithPrefix}:");
+      list.add("return ${mockDef.targetMockClassName}();");
     });
-    list.add(Code(
-        "default: throw UnimplementedError(\'\'\'${createUnimplementedErrorMessage(mockitoConfig)}\'\'\');"));
-    list.add(Code("}"));
-    return Block.of(list);
+    list.add(
+        "default: throw UnimplementedError(\'\'\'${createUnimplementedErrorMessage(mockorConfig)}\'\'\');");
+    list.add("}");
+    return Block.of(list.map((e) => Code(e)).toList());
   }
 
-  Expression _buildGenerateMocksAnnotation(MockerConfig mockitoConfig) {
-    final mockDefsDefault = mockitoConfig.mockDefsMockitoGenerated
+  Expression _buildGenerateMocksAnnotation(MockorConfig mockorConfig) {
+    final mockDefsDefault = mockorConfig.mockDefsMockitoGenerated
         .where((element) => !element.isCustomMock)
         .toList();
-    final customMocks = mockitoConfig.mockDefsMockitoGenerated
+    final customMocks = mockorConfig.mockDefsMockitoGenerated
         .where((element) => element.isCustomMock)
         .toList();
     final typesJoined = mockDefsDefault.map((e) => e.type).join(",");
@@ -77,17 +84,35 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
     return CodeExpression(Code(code));
   }
 
-  Method buildMockerMethod(MockerConfig mockitoConfig) {
-    final name = mockitoConfig.mockerName;
+  Block _createRegisterFallbackValuesMethodBody(MockorConfig mockorConfig) {
+    final list = <String>[];
+    mockorConfig.mocktailFallbackMockDefs?.forEach((mockDef) {
+      list.add("registerFallbackValue(${mockDef.targetMockClassName}());");
+    });
+    return Block.of(list.map((e) => Code(e)).toList());
+  }
+
+  Method _buildRegisterFallbackValuesMethod(MockorConfig mockorConfig) {
+    final name = mockorConfig.registerFallbackValuesName;
     return Method((b) {
-      if (mockitoConfig.generateMockitoAnnotation) {
-        b.annotations.add(_buildGenerateMocksAnnotation(mockitoConfig));
+      b
+        ..name = "_\$$name"
+        ..returns = refer('void')
+        ..body = _createRegisterFallbackValuesMethodBody(mockorConfig);
+    });
+  }
+
+  Method _buildMockerMethod(MockorConfig mockorConfig) {
+    final name = mockorConfig.mockerName;
+    return Method((b) {
+      if (mockorConfig.generateMockitoAnnotation) {
+        b.annotations.add(_buildGenerateMocksAnnotation(mockorConfig));
       }
       b
         ..name = "_\$$name"
         ..returns = refer('dynamic')
         ..types.add(refer("T extends Object"))
-        ..body = _createMockerMethodBody(mockitoConfig);
+        ..body = _createMockerMethodBody(mockorConfig);
     });
   }
 
