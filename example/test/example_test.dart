@@ -3,6 +3,9 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'example_test.mocks.dart';
 import 'package:mockor/annotations.dart';
+
+import 'models/model_a.dart' as ModelA;
+import 'models/model_b.dart' as ModelB;
 part 'example_test.mockor.dart';
 
 abstract class ExampleUseCase {
@@ -20,16 +23,24 @@ class ExampleUseCase3 {}
 @GenerateMocker([
   ExampleUseCase,
   ExampleUseCase2,
+  ModelA.Model,
+  ModelB.Model,
 ])
 T _mock<T extends Object>() => _$_mock<T>();
 void main() {
   late ExampleUseCase exampleUseCase;
   late ExampleUseCase2 exampleUseCase2;
+  // ignore: unused_local_variable
+  late ModelA.Model modelA;
+  // ignore: unused_local_variable
+  late ModelB.Model modelB;
 
   setUp(() {
     // this will return [MockExampleUseCase]
     exampleUseCase = _mock();
     exampleUseCase2 = _mock();
+    modelA = _mock();
+    modelB = _mock();
   });
   test("given example2 throws an exception then don't catch it", () {
     when(exampleUseCase2.example2()).thenThrow(Exception());

@@ -18,21 +18,25 @@ class MockerGenerator extends GeneratorForAnnotation<GenerateMocker> {
     return reader;
   }
 
-  List<DartType> readDartTypesParam(
-      ConstantReader annotation, String parameter) {
-    return readParam(annotation, parameter)
+  Future<List<ResolvedType>> readDartTypesParam(
+      ConstantReader annotation, FunctionElement mockerFunction) {
+    final importAliasTable = _ImportAliasTable.fromElement(mockerFunction);
+
+    return readParam(annotation, "types")
         .listValue
         .map((x) => x.toTypeValue())
         .toList()
-        .nonNullUniqueDartTypesOrThrow(attributeName: parameter);
+        .nonNullUniqueDartTypesOrThrow(importAliasTable);
   }
 
-  String? generateForAnnotatedElement(
-      Element element, ConstantReader annotation, BuildStep buildStep) {
+  @override
+  Future<String?> generateForAnnotatedElement(
+      Element element, ConstantReader annotation, BuildStep buildStep) async {
     try {
-      final generatorConfig = getGeneratorConfig(annotation, element);
+      final generatorConfig =
+          await getGeneratorConfig(annotation, element, buildStep);
       if (generatorConfig != null) {
-        final mockitoConfig = generatorConfig.createMocktioConfig();
+        final mockitoConfig = generatorConfig.createMockerConfig();
         final dartBuilder = MockerDartBuilder();
         return dartBuilder.buildDartFile(mockitoConfig);
       }
@@ -51,21 +55,26 @@ class MockerGenerator extends GeneratorForAnnotation<GenerateMocker> {
     }
   }
 
-  GeneratorConfig? getGeneratorConfig(
-      ConstantReader annotation, Element element) {
+  Future<GeneratorConfig?> getGeneratorConfig(
+      ConstantReader annotation, Element element, BuildStep buildStep) async {
     if (element is FunctionElement) {
-      final types = readDartTypesParam(annotation, 'types');
-      final generateMocker = GenerateMocker([],
-          generateMockitoAnnotation:
-              readParam(annotation, 'generateMockitoAnnotation').boolValue,
-          generateMockExtensions:
-              readParam(annotation, 'generateMockExtensions').boolValue,
-          useMockitoGeneratedTypes:
-              readParam(annotation, 'useMockitoGeneratedTypes').boolValue);
+      final mockerFunction = element;
+      final types = await readDartTypesParam(annotation, mockerFunction);
+      final generateMocker = GenerateMocker(
+        [],
+        generateMockitoAnnotation:
+            readParam(annotation, 'generateMockitoAnnotation').boolValue,
+        generateMockExtensions:
+            readParam(annotation, 'generateMockExtensions').boolValue,
+        useMockitoGeneratedTypes:
+            readParam(annotation, 'useMockitoGeneratedTypes').boolValue,
+        generateMocktailFallback:
+            readParam(annotation, 'generateMocktailFallback').boolValue,
+      );
       _validateGenerateMocker(generateMocker);
       return GeneratorConfig(
         types: types,
-        mockerFunction: element,
+        mockerFunction: mockerFunction,
         generateMocker: generateMocker,
       );
     } else {
@@ -78,7 +87,7 @@ class MockerGenerator extends GeneratorForAnnotation<GenerateMocker> {
 ///Config with mocker function and the types that need mock implementations
 class GeneratorConfig {
   final GenerateMocker generateMocker;
-  final List<DartType> types;
+  final List<ResolvedType> types;
   final FunctionElement mockerFunction;
 
   GeneratorConfig({
@@ -86,21 +95,43 @@ class GeneratorConfig {
     required this.generateMocker,
     required this.mockerFunction,
   });
-  MockerConfig createMocktioConfig() {
+
+  MockerConfig createMockerConfig() {
     final mockDefs = types
         .map((t) => MockDef(
               mockDefNaming: generateMocker.useMockitoGeneratedTypes
                   ? MockDefNaming.MOCKITO
                   : MockDefNaming.INTERNAL,
+              returnNullOnMissingStub: false,
               generateExtension: generateMocker.generateMockExtensions,
-              type: t.getDisplayString(withNullability: false),
+              type: t,
             ))
         .toSet();
     return MockerConfig(
-      mockerName: mockerFunction.name,
-      generateMockitoAnnotation: generateMocker.generateMockitoAnnotation,
-      mockDefs: mockDefs,
-    );
+        mockerName: mockerFunction.name,
+        generateMockitoAnnotation: generateMocker.generateMockitoAnnotation,
+        mockDefs: mockDefs,
+        generateMocktailFallback: generateMocker.generateMocktailFallback);
+  }
+}
+
+extension<T> on List<T> {
+  // ignore: unused_element
+  List<T> onEach(test(T e)) {
+    forEach((element) {
+      test(element);
+    });
+    return this;
+  }
+
+  // ignore: unused_element
+  List<T> onEachIndexed(test(int i, T e)) {
+    var i = 0;
+    forEach((element) {
+      test(i, element);
+      i++;
+    });
+    return this;
   }
 }
 
@@ -110,6 +141,15 @@ extension<T> on List<T?> {
       block(i, this[i]);
     }
   }
+
+  // ignore: unused_element
+  List<T> filterNotNull() =>
+      where((element) => element != null).cast<T>().toList();
+}
+
+extension<T> on List<Future<T>> {
+  // ignore: unused_element
+  Future<List<T>> toFuture() => Stream.fromFutures(this).toList();
 }
 
 void _validateDartType(DartType dartType) {
@@ -119,30 +159,114 @@ void _validateDartType(DartType dartType) {
   assert(!lib.isDartCore);
 }
 
+class _ClassName {
+  final DartType dartType;
+  final String name;
+  final String librarySource;
+
+  _ClassName(this.dartType, this.name, this.librarySource);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _ClassName &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          librarySource == other.librarySource;
+
+  @override
+  int get hashCode => name.hashCode ^ librarySource.hashCode;
+
+  @override
+  String toString() {
+    return name;
+  }
+}
+
+extension on DartType {
+  _ClassName toClassName() {
+    final librarySource = element?.librarySource?.toString();
+    if (librarySource == null) {
+      throw MockorException("error librarySource is null for $this");
+    }
+    return _ClassName(this, getDisplayString(withNullability: false),
+        element!.librarySource!.toString());
+  }
+}
+
+class _ImportAliasTable {
+  final Map<String, String> _importAliasMap = {};
+
+  _ImportAliasTable();
+
+  String? operator [](String? import) {
+    return _importAliasMap[import];
+  }
+
+  void operator []=(String import, String alias) {
+    _importAliasMap[import] = alias;
+  }
+
+  factory _ImportAliasTable.fromElement(Element element) {
+    final table = _ImportAliasTable();
+    element.library?.imports.forEach((importElement) {
+      final prefix = importElement.prefix?.name;
+      if (prefix != null) {
+        final import = importElement.importedLibrary?.source.toString();
+        if (import == null) {
+          throw MockorException(
+              "Could not resolve full library name for ${importElement.uri} in ${importElement.librarySource}");
+        }
+        table[import] = prefix;
+      }
+    });
+    return table;
+  }
+
+  @override
+  String toString() {
+    return '_ImportAliasTable{_importAliasMap: $_importAliasMap}';
+  }
+}
+
 extension on List<DartType?> {
-  List<DartType> nonNullUniqueDartTypesOrThrow(
-      {required String attributeName}) {
+  Future<List<ResolvedType>> nonNullUniqueDartTypesOrThrow(
+      _ImportAliasTable importAliasTable) async {
+    print(importAliasTable);
     forEachIndexed((i, type) {
       if (type == null) {
-        _error('$DartType at $i in $attributeName cannot be determined');
+        _error("$DartType at $i in 'types' argument cannot be determined");
       } else {
         _validateDartType(type);
       }
     });
-
-    if (toSet().length != length) {
-      _error("Some types were specified twice in '$attributeName'!");
-    }
-
-    return where((element) => element != null).cast<DartType>().toList();
+    final nonNullDartTypes = where((element) => element != null)
+        .cast<DartType>()
+        .map((e) => e.toClassName())
+        .toList()
+        .onEachIndexed((i, e) => print("type $i ${e.name} ${e.librarySource}"));
+    final resolvedTypes = nonNullDartTypes
+        .map((type) => ResolvedType(
+            displayName: type.name,
+            librarySource: type.librarySource,
+            prefix: importAliasTable[type.librarySource]))
+        .toList();
+    // check if resolvedTypes is unique
+    resolvedTypes.forEach((type) {
+      final occurrence = resolvedTypes.where((x) => x == type).length;
+      if (occurrence > 1) {
+        _error("Identical type '$type' appears $occurrence times");
+      }
+    });
+    return resolvedTypes;
   }
 }
 
 ///Exception that will be thrown on validation errors
-class MockitoGeneratorException implements Exception {
+class MockorException implements Exception {
   final String cause;
 
-  MockitoGeneratorException(this.cause);
+  MockorException(this.cause);
 
   @override
   String toString() {
@@ -151,5 +275,5 @@ class MockitoGeneratorException implements Exception {
 }
 
 void _error(String message) {
-  throw MockitoGeneratorException(message);
+  throw MockorException(message);
 }

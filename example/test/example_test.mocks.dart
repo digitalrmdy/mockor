@@ -5,6 +5,8 @@
 import 'package:mockito/mockito.dart' as _i1;
 
 import 'example_test.dart' as _i2;
+import 'models/model_a.dart' as _i3;
+import 'models/model_b.dart' as _i4;
 
 // ignore_for_file: avoid_redundant_argument_values
 // ignore_for_file: avoid_setters_without_getters
@@ -41,6 +43,30 @@ class MockExampleUseCase2 extends _i1.Mock implements _i2.ExampleUseCase2 {
   @override
   void example2() => super.noSuchMethod(Invocation.method(#example2, []),
       returnValueForMissingStub: null);
+  @override
+  String toString() => super.toString();
+}
+
+/// A class which mocks [Model].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockModelAModel extends _i1.Mock implements _i3.Model {
+  MockModelAModel() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  String toString() => super.toString();
+}
+
+/// A class which mocks [Model].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockModelBModel extends _i1.Mock implements _i4.Model {
+  MockModelBModel() {
+    _i1.throwOnMissingStub(this);
+  }
+
   @override
   String toString() => super.toString();
 }

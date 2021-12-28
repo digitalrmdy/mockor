@@ -27,7 +27,7 @@ class MockerDartBuilder {
     return Class((b) => b
       ..name = mockitoDef.targetMockClassName
       ..extend = refer("Mock")
-      ..implements.add(refer(mockitoDef.type)));
+      ..implements.add(refer(mockitoDef.type.displayNameWithPrefix)));
   }
 
   String createUnimplementedErrorMessage(MockerConfig mockitoConfig) {
@@ -42,7 +42,7 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
     // switch statement
     list.add(Code("switch(T) {"));
     mockitoConfig.mockDefs.forEach((mockDef) {
-      list.add(Code("case ${mockDef.type}:"));
+      list.add(Code("case ${mockDef.type.displayNameWithPrefix}:"));
       list.add(Code("return ${mockDef.targetMockClassName}();"));
     });
     list.add(Code(
@@ -52,10 +52,28 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
   }
 
   Expression _buildGenerateMocksAnnotation(MockerConfig mockitoConfig) {
-    final mockDefs = mockitoConfig.mockDefsMockitoGenerated;
-    final typesJoined = mockDefs.map((e) => e.type).join(",");
-    var code = "";
-    code += "GenerateMocks([$typesJoined])";
+    final mockDefsDefault = mockitoConfig.mockDefsMockitoGenerated
+        .where((element) => !element.isCustomMock)
+        .toList();
+    final customMocks = mockitoConfig.mockDefsMockitoGenerated
+        .where((element) => element.isCustomMock)
+        .toList();
+    final typesJoined = mockDefsDefault.map((e) => e.type).join(",");
+    var code = "GenerateMocks([$typesJoined]";
+    if (customMocks.isNotEmpty) {
+      code += ", customMocks: [";
+      customMocks.forEach((mockDef) {
+        final customName = mockDef.targetMockClassName;
+        code +=
+            "MockSpec<${mockDef.type.displayNameWithPrefix}>(as: #$customName, ";
+        if (mockDef.returnNullOnMissingStub) {
+          code += "returnNullOnMissingStub: true, ";
+        }
+        code += "), ";
+      });
+      code += "]";
+    }
+    code += ")";
     return CodeExpression(Code(code));
   }
 
@@ -80,8 +98,8 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
       ..returns = refer(mockDef.targetMockClassName)
       ..body = Code("this as ${mockDef.targetMockClassName}"));
     return Extension((_) => _
-      ..name = "${mockDef.type}AsMockExtension"
-      ..on = refer(mockDef.type)
+      ..name = "${mockDef.type.displayNameUnique}AsMockExtension"
+      ..on = refer(mockDef.type.displayNameWithPrefix)
       ..methods.addAll([asMockMethod]));
   }
 }

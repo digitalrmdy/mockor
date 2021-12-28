@@ -1,25 +1,27 @@
+import 'package:analyzer/dart/element/type.dart';
+import 'package:build/build.dart';
+
 ///container for [type] that needs to be generated
 class MockDef {
-  final String type;
+  final ResolvedType type;
   final MockDefNaming mockDefNaming;
   final bool generateExtension;
+  final bool returnNullOnMissingStub;
 
   const MockDef(
       {required this.type,
       required this.mockDefNaming,
-      required this.generateExtension});
+      required this.generateExtension,
+      required this.returnNullOnMissingStub});
 
-  String _buildTarget(String prefix) {
-    var s = "";
-    if (mockDefNaming == MockDefNaming.INTERNAL) {
-      s += "_\$";
-    }
-    s += "$prefix$type";
-    return s;
-  }
+  String _buildTarget(String prefix) => _buildTargetImpl(
+      prefix: prefix,
+      mockDefNaming: mockDefNaming,
+      type: type.displayNameUnique);
 
   String get targetMockClassName => _buildTarget(_prefixMock);
-  String get targetMockClassNameRelaxed => '${targetMockClassName}Relaxed';
+
+  bool get isCustomMock => type.prefix != null || returnNullOnMissingStub;
 
   @override
   bool operator ==(Object other) =>
@@ -42,10 +44,14 @@ class MockerConfig {
 
   final bool generateMockitoAnnotation;
 
-  MockerConfig(
-      {required this.mockDefs,
-      required this.mockerName,
-      required this.generateMockitoAnnotation});
+  final bool generateMocktailFallback;
+
+  MockerConfig({
+    required this.mockDefs,
+    required this.mockerName,
+    required this.generateMockitoAnnotation,
+    required this.generateMocktailFallback,
+  });
 
   List<MockDef> get mockDefsToGenerate => mockDefs
       .where((element) => element.mockDefNaming == MockDefNaming.INTERNAL)
@@ -58,3 +64,63 @@ class MockerConfig {
 enum MockDefNaming { MOCKITO, INTERNAL }
 
 const _prefixMock = "Mock";
+
+String _buildTargetImpl(
+    {required String prefix,
+    required MockDefNaming mockDefNaming,
+    required String type}) {
+  var s = "";
+  if (mockDefNaming == MockDefNaming.INTERNAL) {
+    s += "_\$";
+  }
+  s += "$prefix$type";
+  return s;
+}
+
+class ResolvedType {
+  final String displayName;
+  final String librarySource;
+  final String? prefix;
+
+  ResolvedType({
+    required this.displayName,
+    required this.librarySource,
+    required this.prefix,
+  });
+
+  String get displayNameUnique {
+    var s = "";
+    if (prefix != null) {
+      s += "$prefix";
+    }
+    s += displayName;
+    return s;
+  }
+
+  String get displayNameWithPrefix {
+    var s = "";
+    if (prefix != null) {
+      s += "$prefix.";
+    }
+    s += displayName;
+    return s;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ResolvedType &&
+          runtimeType == other.runtimeType &&
+          displayName == other.displayName &&
+          librarySource == other.librarySource &&
+          prefix == other.prefix;
+
+  @override
+  int get hashCode =>
+      displayName.hashCode ^ librarySource.hashCode ^ prefix.hashCode;
+
+  @override
+  String toString() {
+    return displayName;
+  }
+}
