@@ -54,7 +54,7 @@ void main() {
      * by default an `asMock` extension method will be generated.
      * Which returns the mocked type.
      * Due to null safety we can only use the [any] matcher on non null params when using mock type.
-     * Please read the [NULL_SAFETY_README](https://github.com/dart-lang/mockito/blob/master/NULL_SAFETY_README.md) for more info.
+     * Please read the [Null Safety README](https://github.com/dart-lang/mockito/blob/master/NULL_SAFETY_README.md) for more info.
      */
     when(exampleUseCase.asMock().example(any)).thenReturn(2);
     expect(exampleUseCase.example(ExampleModel()), 2);

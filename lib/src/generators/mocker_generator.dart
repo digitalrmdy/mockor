@@ -152,11 +152,29 @@ extension<T> on List<Future<T>> {
   Future<List<T>> toFuture() => Stream.fromFutures(this).toList();
 }
 
-void _validateDartType(DartType dartType) {
-  final lib = dartType.element?.library;
-  lib!;
-  assert(!lib.isDartAsync);
-  assert(!lib.isDartCore);
+void _validateDartType(DartType dartType, onError(String message)) {
+  if (dartType.isDynamic) {
+    onError("cannot mock `dynamic`");
+  }
+  if (dartType.alias?.element != null) {
+    onError("cannot mock a typedef");
+  }
+  final element = dartType.element;
+  if (element == null) {
+    onError("could not obtain element");
+  } else {
+    final library = element.library;
+    if (library == null) {
+      onError("could not obtain library element");
+    } else {
+      final typeProvider = library.typeProvider;
+      if (element is ClassElement) {
+        if (typeProvider.isNonSubtypableClass(element)) {
+          onError("This type is non-subtypable so cannot be mocked");
+        }
+      }
+    }
+  }
 }
 
 class _ClassName {
@@ -234,10 +252,12 @@ extension on List<DartType?> {
       _ImportAliasTable importAliasTable) async {
     print(importAliasTable);
     forEachIndexed((i, type) {
+      void errorF(String msg) => _error(
+          "Error with type ${type != null ? "`$type`" : ""} at position $i in 'types' argument: $msg");
       if (type == null) {
-        _error("$DartType at $i in 'types' argument cannot be determined");
+        errorF("this is not a type");
       } else {
-        _validateDartType(type);
+        _validateDartType(type, _error);
       }
     });
     final nonNullDartTypes = where((element) => element != null)
