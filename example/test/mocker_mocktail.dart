@@ -13,11 +13,13 @@ class _Model {}
 
 class _Model2 {}
 
-@GenerateMocker([MockerMocktailUseCase],
-    generateMockExtensions: false,
-    generateMockitoAnnotation: false,
-    useMockitoGeneratedTypes: false,
-    generateMocktailFallbackValues: GenerateMocktailFallbackValues([_Model2]))
+@GenerateMocker(
+  [MockerMocktailUseCase],
+  generateMockExtensions: false,
+  generateMockitoAnnotation: false,
+  useMockitoGeneratedTypes: false,
+  generateMocktailFallbackValues: GenerateMocktailFallbackValues([_Model2]),
+)
 T _mock<T extends Object>() => _$_mock<T>();
 
 void registerFallbackValuesAll() {

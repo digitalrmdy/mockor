@@ -85,40 +85,32 @@ part 'mocker.mockor.dart';
   generateMockExtensions: false,
   generateMockitoAnnotation: false,
   useMockitoGeneratedTypes: false,
+  // optionally generate fallback values for non null params to use `any()`
+  generateMocktailFallbackValues: GenerateMocktailFallbackValues([ExampleModel]),
 )
 T mock<T extends Object>() => _$_mock<T>();
+
+void registerFallbackValuesAll() {
+  _$registerFallbackValues();
+}
+
 
 ```
 
 ## Main Advantage over vanilla Mockito
+
 You can always work with the base type:
 - Renaming the class will not break tests.
 - Find usages will not miss anything
 - Never have to import/depend on mocks directly
 
-### The main downside is that you need to use a generated `asMock` extension method to make use of the `any` keyword.
-
-```dart
-extension ExampleUseCaseAsMockExtension on ExampleUseCase {
-  MockExampleUseCase asMock() => this as MockExampleUseCase;
-}
-```
-Then in your test:
-```dart  
-abstract class ExampleUseCase {
-  int example(int i);
-}
-final ExampleUseCase useCase = mock();
-// asMock required becuase int i is non null and `any` returns null. the method is overriden with a nullable param in MockExampleUseCase.
-when(useCase.asMock().example(any)).thenReturn(1)
-``` 
-Please read Mockito's [Null Safety README](https://github.com/dart-lang/mockito/blob/master/NULL_SAFETY_README.md) for more info.
 ## Advantage over vanilla Mocktail
 ### Fast Code Generation
 Even though Mocktail was created to avoid code generation, here code generation is required but only for the one file with the generic mock function.
 There's no dependency to generated code in any of your tests. And each mock class is only 1 line long.
 ### Private Mock classes
-The generated mock classes are private so cannot be imported. Simply call the global `mock` method. This makes it easier for all developers to follow consistent code conventions.
+The generated mock classes are private so cannot be imported. Simply call the global `mock` method. 
+This makes it easier for all developers to follow consistent code conventions.
 ### Generate `registerFallbackValues` function
 An annoying drawback of mocktail is that you need to register fallback values if you want to call the `any()` function on them.
 With Mockor, you can generate a `registerFallbackValues` function where you only need to specify the types. 
@@ -140,6 +132,21 @@ analyzer:
 The mocker method only supports returning a mock instance for it's base type.
 
 ### Error when using `any`: "The argument type 'Null' can't be assigned to the parameter type..."
+To be able to use of `any`, you need the mocked type and not the base type. 
+An `asMock` extension function is generated for this purpose.
 
-For the cases where you use `any`, make use of the `asMock` extension.
-It's explained more in depth in the advantage/disadvantage section above.
+```dart
+extension ExampleUseCaseAsMockExtension on ExampleUseCase {
+  MockExampleUseCase asMock() => this as MockExampleUseCase;
+}
+```
+Then in your test:
+```dart  
+abstract class ExampleUseCase {
+  int example(int i);
+}
+final ExampleUseCase useCase = mock();
+// asMock required becuase int i is non null and `any` returns null. the method is overriden with a nullable param in MockExampleUseCase.
+when(useCase.asMock().example(any)).thenReturn(1)
+``` 
+Please read Mockito's [Null Safety README](https://github.com/dart-lang/mockito/blob/master/NULL_SAFETY_README.md) for more info.
