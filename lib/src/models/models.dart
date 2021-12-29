@@ -7,12 +7,14 @@ class MockDef {
   final MockDefNaming mockDefNaming;
   final bool generateExtension;
   final bool returnNullOnMissingStub;
+  final String? uri;
 
   const MockDef(
       {required this.type,
       required this.mockDefNaming,
       required this.generateExtension,
-      required this.returnNullOnMissingStub});
+      required this.returnNullOnMissingStub,
+      this.uri});
 
   String _buildTarget(String prefix) => _buildTargetImpl(
       prefix: prefix,
@@ -22,6 +24,8 @@ class MockDef {
   String get targetMockClassName => _buildTarget(_prefixMock);
 
   bool get isCustomMock => type.prefix != null || returnNullOnMissingStub;
+
+  String? get import => uri;
 
   @override
   bool operator ==(Object other) =>
@@ -53,7 +57,7 @@ class MockorConfig {
     required this.mocktailFallbackMockDefs,
   });
 
-  String get registerFallbackValuesName => "registerFallbackValues";
+  String get registerFallbackValuesName => "_\$registerFallbackValues";
 
   List<MockDef> get mockDefsToGenerate => mockDefs
       .where((element) => element.mockDefNaming == MockDefNaming.INTERNAL)
@@ -83,12 +87,22 @@ class ResolvedType {
   final String displayName;
   final String librarySource;
   final String? prefix;
+  final InterfaceType dartType;
 
   ResolvedType({
     required this.displayName,
     required this.librarySource,
     required this.prefix,
+    required this.dartType,
   });
+
+  ResolvedType copyWith({required String? prefix}) {
+    return ResolvedType(
+        displayName: displayName,
+        librarySource: librarySource,
+        prefix: prefix,
+        dartType: dartType);
+  }
 
   String get displayNameUnique {
     var s = "";
@@ -125,4 +139,12 @@ class ResolvedType {
   String toString() {
     return displayName;
   }
+}
+
+class MocktailFallbackValuesConfig {
+  final Set<MockDef> mocktailFallbackMockDefs;
+
+  MocktailFallbackValuesConfig({required this.mocktailFallbackMockDefs});
+
+  String get registerFallbackValuesName => "registerFallbackValuesAutoDetected";
 }

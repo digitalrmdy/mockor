@@ -15,3 +15,9 @@ builders:
     auto_apply: dependents
     build_to: source
     runs_before: ["mockito|mockBuilder"]
+  mocktailFallbackBuilder:
+    import: "package:mockor/builder.dart"
+    builder_factories: ["mocktailFallbackBuilder"]
+    build_extensions: {".dart": [".fallback.dart"]}
+    auto_apply: dependents
+    build_to: source

@@ -10,6 +10,7 @@ library mockor.builder;
 
 import 'package:build/build.dart';
 import 'package:mockor/src/generators/mocker_generator.dart';
+import 'package:mockor/src/generators/mocktail_fallback_values_generator.dart';
 import 'package:source_gen/source_gen.dart';
 
 /// Supports `package:build_runner` creation and configuration of
@@ -19,6 +20,17 @@ import 'package:source_gen/source_gen.dart';
 Builder mockor(BuilderOptions builderOptions) => PartBuilder(
       const [MockerGenerator()],
       '.mockor.dart',
+      header: '''
+// coverage:ignore-file
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: non_constant_identifier_names
+    ''',
+    );
+
+Builder mocktailFallbackBuilder(BuilderOptions builderOptions) =>
+    LibraryBuilder(
+      MocktailFallbackValuesGenerator(),
+      generatedExtension: ".fallback.dart",
       header: '''
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND

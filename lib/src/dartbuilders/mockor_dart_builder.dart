@@ -4,24 +4,27 @@ import 'package:mockor/annotations.dart';
 import 'package:mockor/src/models/models.dart';
 
 ///Builds Dart code of the mocker function
-class MockerDartBuilder {
+class MockorDartBuilder {
   String buildDartFile(MockorConfig mockorConfig) {
     final lib = Library(
       (b) {
+        final mockDefsToGenerate = mockorConfig.mockDefsToGenerate;
         b
           ..body.add(_buildMockerMethod(mockorConfig))
-          ..body.addAll(
-              mockorConfig.mockDefsToGenerate.map(_buildMockClass).toList())
+          ..body.addAll(mockDefsToGenerate.map(_buildMockClass).toList())
           ..body.addAll(mockorConfig.mockDefs
               .where((element) => element.generateExtension)
               .map(buildAsMockExtension)
               .toList());
         final mocktailFallbackMockDefs = mockorConfig.mocktailFallbackMockDefs;
         if (mocktailFallbackMockDefs != null) {
+          final types = mockDefsToGenerate.map((e) => e.type).toList();
+          final newMocks = mocktailFallbackMockDefs
+              .where((element) => !types.contains(element.type))
+              .toList();
           b
             ..body.add(_buildRegisterFallbackValuesMethod(mockorConfig))
-            ..body
-                .addAll(mocktailFallbackMockDefs.map(_buildMockClass).toList());
+            ..body.addAll(newMocks.map(_buildMockClass).toList());
         }
       },
     );
@@ -96,7 +99,7 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
     final name = mockorConfig.registerFallbackValuesName;
     return Method((b) {
       b
-        ..name = "_\$$name"
+        ..name = name
         ..returns = refer('void')
         ..body = _createRegisterFallbackValuesMethodBody(mockorConfig);
     });

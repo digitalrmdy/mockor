@@ -1,29 +1,48 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockor/annotations.dart';
 import 'package:mocktail/mocktail.dart';
+
+import 'mocker_mocktail.fallback.dart';
+import 'models/model_a.dart' as ModelA;
+import 'models/model_b.dart' as ModelB;
 part 'mocker_mocktail.mockor.dart';
 
 abstract class MockerMocktailUseCase {
   int test(int i);
   _Model test2(_Model model);
   _Model2 test3(_Model2 model);
+  void test4(Model3 model3);
+  void test5({required Model3 model3});
+  void test6({Model4? model4});
+  void test7(Model5<Model4> model5);
+  void test8(ModelA.Model modelA, ModelB.Model modelB);
 }
 
 class _Model {}
 
 class _Model2 {}
 
+class Model3 {}
+
+class Model4 {}
+
+class Model5<T> {}
+
 @GenerateMocker(
   [MockerMocktailUseCase],
   generateMockExtensions: false,
   generateMockitoAnnotation: false,
   useMockitoGeneratedTypes: false,
-  generateMocktailFallbackValues: GenerateMocktailFallbackValues([_Model2]),
+  generateMocktailFallbackValues: GenerateMocktailFallbackValues(
+    [_Model2, MockerMocktailUseCase],
+    autoDetect: true,
+  ),
 )
 T _mock<T extends Object>() => _$_mock<T>();
 
 void registerFallbackValuesAll() {
   _$registerFallbackValues();
+  registerFallbackValuesAutoDetected();
 }
 
 void main() {

@@ -25,6 +25,7 @@ class _$MockMockerMocktailUseCase extends Mock
 
 void _$registerFallbackValues() {
   registerFallbackValue(_$Mock_Model2());
+  registerFallbackValue(_$MockMockerMocktailUseCase());
 }
 
 class _$Mock_Model2 extends Mock implements _Model2 {}

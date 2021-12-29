@@ -43,6 +43,7 @@ class GenerateMocker {
 
 class GenerateMocktailFallbackValues {
   final List<Type> types;
+  final bool autoDetect;
 
-  const GenerateMocktailFallbackValues(this.types);
+  const GenerateMocktailFallbackValues(this.types, {this.autoDetect = false});
 }
