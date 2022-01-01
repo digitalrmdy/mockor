@@ -29,6 +29,7 @@ class GenerateMocker {
   /// **true** by default
   final bool generateMockExtensions;
 
+  /// options for [mocktail](https://pub.dev/packages/mocktail).
   /// null by default
   final GenerateMocktailFallbackValues? generateMocktailFallbackValues;
 
@@ -41,8 +42,18 @@ class GenerateMocker {
   });
 }
 
+///
+/// generate method with `registerFallbackValues` calls,
+/// this is needed to make the `any()` function work in mocktail](https://pub.dev/packages/mocktail).
+///
 class GenerateMocktailFallbackValues {
   final List<Type> types;
+
+  /// NOTE: experimental feature.
+  /// Register a mock class for all the non primitive parameters of all the methods in each class of [GenerateMocker.types]
+  /// Classes with type parameters will be ignored.
+  /// If a class didn't get picked up, please add it manually in [types].
+  /// Find the generated method in `<filename>.fallback.dart`.
   final bool autoDetect;
 
   const GenerateMocktailFallbackValues(this.types, {this.autoDetect = false});
