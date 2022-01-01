@@ -16,6 +16,7 @@ abstract class MockerMocktailUseCase {
   void test6({Model4? model4});
   void test7(Model5<Model4> model5);
   void test8(ModelA.Model modelA, ModelB.Model modelB);
+  void test9(Model6 model6);
 }
 
 class _Model {}
@@ -28,13 +29,15 @@ class Model4 {}
 
 class Model5<T> {}
 
+class Model6 {}
+
 @GenerateMocker(
   [MockerMocktailUseCase],
   generateMockExtensions: false,
   generateMockitoAnnotation: false,
   useMockitoGeneratedTypes: false,
   generateMocktailFallbackValues: GenerateMocktailFallbackValues(
-    [_Model2, MockerMocktailUseCase],
+    [_Model2, MockerMocktailUseCase, Model6],
     autoDetect: true,
   ),
 )

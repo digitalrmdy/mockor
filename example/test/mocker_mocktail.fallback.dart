@@ -15,6 +15,7 @@ void registerFallbackValuesAutoDetected() {
   _i1.registerFallbackValue(_$MockModel3());
   _i1.registerFallbackValue(_$MockModel());
   _i1.registerFallbackValue(_$Mock$Model());
+  _i1.registerFallbackValue(_$MockModel6());
 }
 
 class _$MockModel3 extends _i1.Mock implements _i2.Model3 {}
@@ -22,3 +23,5 @@ class _$MockModel3 extends _i1.Mock implements _i2.Model3 {}
 class _$MockModel extends _i1.Mock implements _i3.Model {}
 
 class _$Mock$Model extends _i1.Mock implements _i4.Model {}
+
+class _$MockModel6 extends _i1.Mock implements _i2.Model6 {}
