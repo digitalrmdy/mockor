@@ -1,3 +1,8 @@
+## 1.2.0
+
+- add optional `relaxedVoid` parameter to `_$mock` method for `mocktail`. 
+- Improve mocktail docs.
+
 ## 1.1.1
 
 - fix homepage

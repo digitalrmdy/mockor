@@ -2,11 +2,13 @@
 // in example/test/example_test.dart.
 // Do not manually edit this file.
 
+import 'dart:async' as _i3;
+
 import 'package:mockito/mockito.dart' as _i1;
 
 import 'example_test.dart' as _i2;
-import 'models/model_a.dart' as _i3;
-import 'models/model_b.dart' as _i4;
+import 'models/model_a.dart' as _i4;
+import 'models/model_b.dart' as _i5;
 
 // ignore_for_file: avoid_redundant_argument_values
 // ignore_for_file: avoid_setters_without_getters
@@ -36,13 +38,10 @@ class MockExampleUseCase2 extends _i1.Mock implements _i2.ExampleUseCase2 {
   void exampleVoid() => super.noSuchMethod(Invocation.method(#exampleVoid, []),
       returnValueForMissingStub: null);
   @override
-  String toString() => super.toString();
-}
-
-/// A class which mocks [Model].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockModelAModel extends _i1.Mock implements _i3.Model {
+  _i3.Future<void> exampleFutureVoid() =>
+      (super.noSuchMethod(Invocation.method(#exampleFutureVoid, []),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i3.Future<void>);
   @override
   String toString() => super.toString();
 }
@@ -50,7 +49,15 @@ class MockModelAModel extends _i1.Mock implements _i3.Model {
 /// A class which mocks [Model].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockModelBModel extends _i1.Mock implements _i4.Model {
+class MockModelAModel extends _i1.Mock implements _i4.Model {
+  @override
+  String toString() => super.toString();
+}
+
+/// A class which mocks [Model].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockModelBModel extends _i1.Mock implements _i5.Model {
   @override
   String toString() => super.toString();
 }

@@ -3,8 +3,8 @@ import 'package:mockor/mockor.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'mocker_mocktail_test.fallback.dart';
-import 'models/model_a.dart' as ModelA;
-import 'models/model_b.dart' as ModelB;
+import '../models/model_a.dart' as ModelA;
+import '../models/model_b.dart' as ModelB;
 part 'mocker_mocktail_test.mockor.dart';
 
 abstract class MockerMocktailUseCase {
@@ -17,7 +17,8 @@ abstract class MockerMocktailUseCase {
   void test7(Model5<Model4> model5);
   void test8(ModelA.Model modelA, ModelB.Model modelB);
   void test9(Model6 model6);
-  void testNullable(int? i);
+  void testVoid(int? i);
+  Future<void> testFutureVoid();
 }
 
 class _Model {}
@@ -52,13 +53,9 @@ void registerFallbackValuesAll() {
 
 void main() {
   late MockerMocktailUseCase useCase;
-  late MockerMocktailUseCase useCaseNotRelaxed;
-  setUpAll(() {
-    registerFallbackValuesAll();
-  });
+
   setUp(() {
     useCase = _mock(relaxed: true);
-    useCaseNotRelaxed = _mock(relaxed: false);
   });
   test("`when` with any() doesn't crash and works as expected", () {
     when(() => useCase.test(any())).thenReturn(1);
@@ -80,7 +77,7 @@ void main() {
   group("relaxed", () {
     group("given relaxed is true", () {
       test("then don't throw exception on nullable method not stubbed", () {
-        useCase.testNullable(0);
+        useCase.testVoid(0);
       });
       test("then throw typeError on non null method not stubbed", () {
         try {
@@ -90,11 +87,24 @@ void main() {
           fail("did not expect $MissingStubError");
         }
       });
+      test("then don't throw exception on Future<void> method not stubbed",
+          () async {
+        try {
+          await useCase.testFutureVoid();
+          fail("expected exception");
+        } on MissingStubError {
+          fail("did not expect $MissingStubError");
+        } on TypeError {}
+      });
     });
     group("given relaxed is false", () {
+      late MockerMocktailUseCase useCaseNotRelaxed;
+      setUp(() {
+        useCaseNotRelaxed = _mock(relaxed: false);
+      });
       test("then throw $MissingStubError on nullable method not stubbed", () {
         try {
-          useCaseNotRelaxed.testNullable(0);
+          useCaseNotRelaxed.testVoid(0);
           fail("expected $MissingStubError");
         } on MissingStubError {}
       });
@@ -105,6 +115,15 @@ void main() {
         } on TypeError {
           fail("did not expect $TypeError");
         }
+      });
+
+      test("then throw exception on Future<void> method not stubbed", () async {
+        try {
+          await useCaseNotRelaxed.testFutureVoid();
+          fail("expected exception");
+        } on TypeError {
+          fail("did not expect $TypeError");
+        } on MissingStubError {}
       });
     });
   });

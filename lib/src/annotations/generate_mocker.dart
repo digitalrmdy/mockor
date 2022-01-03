@@ -26,6 +26,8 @@ class GenerateMocker {
   /// Due to null safety we can only use the `any` matcher on non null params when using the mocked type.
   /// Please read Mockito's [Null Safety README](https://github.com/dart-lang/mockito/blob/master/NULL_SAFETY_README.md) for more info.
   ///
+  /// When using `mocktail`, should be set to `false`
+  ///
   /// **true** by default
   final bool generateMockExtensions;
 
