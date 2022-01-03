@@ -49,7 +49,7 @@ void validateDartType(DartType dartType, onError(String message)) {
   if (dartType.isDynamic) {
     onError("cannot mock `dynamic`");
   }
-  if (dartType.aliasElement != null) {
+  if (dartType.alias?.element != null) {
     onError("cannot mock a typedef");
   }
   final element = dartType.element;
