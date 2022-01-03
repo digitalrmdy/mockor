@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'example_test.mocks.dart';
-import 'package:mockor/annotations.dart';
+import 'package:mockor/mockor.dart';
 
 import 'models/model_a.dart' as ModelA;
 import 'models/model_b.dart' as ModelB;

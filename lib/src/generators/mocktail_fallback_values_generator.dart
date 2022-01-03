@@ -2,7 +2,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
-import 'package:mockor/annotations.dart';
+import 'package:mockor/mockor.dart';
 import 'package:mockor/src/dartbuilders/mocktail_fallback_values_dart_builder.dart';
 import 'package:mockor/src/exceptions/mockor_exception.dart';
 import 'package:mockor/src/generators/common/resolve_asset_uri.dart';

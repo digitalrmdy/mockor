@@ -11,7 +11,7 @@ import 'package:mockito/annotations.dart';
 // This needs to be added manually.
 import 'example.mocks.dart';
 
-import 'package:mockor/annotations.dart';
+import 'package:mockor/mockor.dart';
 
 part 'example.mockor.dart';
 
