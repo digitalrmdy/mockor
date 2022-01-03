@@ -1,3 +1,7 @@
+## 1.1.1
+
+- fix homepage
+
 ## 1.1.0
 
 - add optional `relaxed` parameter to `_$mock` method.
