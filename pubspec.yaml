@@ -1,5 +1,5 @@
 name: mockor
-description: Generic mocker method generator for `mockito` or `mocktail`
+description: Generic mocker method generator for `mockito` or `mocktail` to mock any class just like in the original `mockito`.
 version: 1.0.0
 homepage: https://rmdy.be
 

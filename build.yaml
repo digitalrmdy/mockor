@@ -1,3 +1,12 @@
+targets:
+  $default:
+    builders:
+      mockor:
+        generate_for:
+          - example/**.dart
+      mocktailFallbackBuilder:
+        generate_for:
+          - example/**.dart
 # Read about `build.yaml` at https://pub.dev/packages/build_config
 builders:
   # The next three builders are `SharedPartBuilder` instances.
@@ -9,14 +18,14 @@ builders:
   # `applies_builders` - uses the `combining_builder` from `source_gen` to
   #   combine the parts from each builder into one part file.
   mockor:
-    import: "package:mockor/builder.dart"
+    import: "package:mockor/src/builder.dart"
     builder_factories: ["mockor"]
     build_extensions: {".dart": [".mockor.dart"]}
     auto_apply: dependents
     build_to: source
     runs_before: ["mockito|mockBuilder"]
   mocktailFallbackBuilder:
-    import: "package:mockor/builder.dart"
+    import: "package:mockor/src/builder.dart"
     builder_factories: ["mocktailFallbackBuilder"]
     build_extensions: {".dart": [".fallback.dart"]}
     auto_apply: dependents
