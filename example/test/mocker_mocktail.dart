@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockor/annotations.dart';
+import 'package:mockor/mockor.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'mocker_mocktail.fallback.dart';

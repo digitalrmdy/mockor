@@ -25,7 +25,7 @@ class MocktailFallbackValuesDartBuilder {
     return Class((b) => b
       ..name = mockitoDef.targetMockClassName
       ..extend = refer("Mock", _mocktailUri)
-      ..implements.add(refer(mockitoDef.type.displayName, mockitoDef.import)));
+      ..implements.add(refer(mockitoDef.type.name, mockitoDef.import)));
   }
 
   Method _buildRegisterFallbackValuesMethod(

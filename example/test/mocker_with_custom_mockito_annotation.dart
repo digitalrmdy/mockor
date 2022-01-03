@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'mocker_with_custom_mockito_annotation.mocks.dart';
-import 'package:mockor/annotations.dart';
+import 'package:mockor/mockor.dart';
 part 'mocker_with_custom_mockito_annotation.mockor.dart';
 
 abstract class MockerWithCustomMockitoUseCase {

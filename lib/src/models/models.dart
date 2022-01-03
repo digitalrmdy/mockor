@@ -1,5 +1,4 @@
 import 'package:analyzer/dart/element/type.dart';
-import 'package:build/build.dart';
 
 ///container for [type] that needs to be generated
 class MockDef {
@@ -17,9 +16,7 @@ class MockDef {
       this.uri});
 
   String _buildTarget(String prefix) => _buildTargetImpl(
-      prefix: prefix,
-      mockDefNaming: mockDefNaming,
-      type: type.displayNameUnique);
+      prefix: prefix, mockDefNaming: mockDefNaming, type: type.nameUnique);
 
   String get targetMockClassName => _buildTarget(_prefixMock);
 
@@ -84,13 +81,13 @@ String _buildTargetImpl(
 }
 
 class ResolvedType {
-  final String displayName;
+  final String name;
   final String librarySource;
   final String? prefix;
   final InterfaceType dartType;
 
   ResolvedType({
-    required this.displayName,
+    required this.name,
     required this.librarySource,
     required this.prefix,
     required this.dartType,
@@ -98,27 +95,27 @@ class ResolvedType {
 
   ResolvedType copyWith({required String? prefix}) {
     return ResolvedType(
-        displayName: displayName,
+        name: name,
         librarySource: librarySource,
         prefix: prefix,
         dartType: dartType);
   }
 
-  String get displayNameUnique {
+  String get nameUnique {
     var s = "";
     if (prefix != null) {
       s += "$prefix";
     }
-    s += displayName;
+    s += name;
     return s;
   }
 
-  String get displayNameWithPrefix {
+  String get nameWithPrefix {
     var s = "";
     if (prefix != null) {
       s += "$prefix.";
     }
-    s += displayName;
+    s += name;
     return s;
   }
 
@@ -127,17 +124,16 @@ class ResolvedType {
       identical(this, other) ||
       other is ResolvedType &&
           runtimeType == other.runtimeType &&
-          displayName == other.displayName &&
+          name == other.name &&
           librarySource == other.librarySource &&
           prefix == other.prefix;
 
   @override
-  int get hashCode =>
-      displayName.hashCode ^ librarySource.hashCode ^ prefix.hashCode;
+  int get hashCode => name.hashCode ^ librarySource.hashCode ^ prefix.hashCode;
 
   @override
   String toString() {
-    return displayName;
+    return name;
   }
 }
 
