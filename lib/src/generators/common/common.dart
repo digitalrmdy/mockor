@@ -49,7 +49,7 @@ void validateDartType(DartType dartType, onError(String message)) {
   if (dartType.isDynamic) {
     onError("cannot mock `dynamic`");
   }
-  if (dartType.alias?.element != null) {
+  if (dartType.aliasElement != null) {
     onError("cannot mock a typedef");
   }
   final element = dartType.element;
@@ -99,8 +99,7 @@ class ClassName {
 
 extension on InterfaceType {
   ClassName toClassName() {
-    return ClassName(this, getDisplayString(withNullability: false),
-        element.librarySource.toString());
+    return ClassName(this, element.name, element.librarySource.toString());
   }
 }
 
@@ -156,7 +155,7 @@ extension DartTypeExtension on List<DartType?> {
         .toList();
     final resolvedTypes = nonNullDartTypes
         .map((type) => ResolvedType(
-            displayName: type.name,
+            name: type.name,
             librarySource: type.librarySource,
             prefix: importAliasTable[type.librarySource],
             dartType: type.dartType))

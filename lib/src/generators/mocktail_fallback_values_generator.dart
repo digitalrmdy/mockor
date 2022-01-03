@@ -115,10 +115,10 @@ extension on List<ResolvedType> {
 
   void _makeUnique(
       ResolvedType resolvedType, Map<String, ResolvedType> uniqueEntries) {
-    if (uniqueEntries.containsKey(resolvedType.displayNameUnique)) {
+    if (uniqueEntries.containsKey(resolvedType.nameUnique)) {
       _makeUnique(_appendDollar(resolvedType), uniqueEntries);
     } else {
-      uniqueEntries[resolvedType.displayNameUnique] = resolvedType;
+      uniqueEntries[resolvedType.nameUnique] = resolvedType;
     }
   }
 

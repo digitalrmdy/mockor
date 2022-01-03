@@ -37,7 +37,7 @@ class MockorDartBuilder {
     return Class((b) => b
       ..name = mockitoDef.targetMockClassName
       ..extend = refer("Mock")
-      ..implements.add(refer(mockitoDef.type.displayNameWithPrefix)));
+      ..implements.add(refer(mockitoDef.type.nameWithPrefix)));
   }
 
   String createUnimplementedErrorMessage(MockorConfig mockorConfig) {
@@ -52,7 +52,7 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
     // switch statement
     list.add("switch(T) {");
     mockorConfig.mockDefs.forEach((mockDef) {
-      list.add("case ${mockDef.type.displayNameWithPrefix}:");
+      list.add("case ${mockDef.type.nameWithPrefix}:");
       list.add("return ${mockDef.targetMockClassName}();");
     });
     list.add(
@@ -74,8 +74,7 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
       code += ", customMocks: [";
       customMocks.forEach((mockDef) {
         final customName = mockDef.targetMockClassName;
-        code +=
-            "MockSpec<${mockDef.type.displayNameWithPrefix}>(as: #$customName, ";
+        code += "MockSpec<${mockDef.type.nameWithPrefix}>(as: #$customName, ";
         if (mockDef.returnNullOnMissingStub) {
           code += "returnNullOnMissingStub: true, ";
         }
@@ -126,8 +125,8 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
       ..returns = refer(mockDef.targetMockClassName)
       ..body = Code("this as ${mockDef.targetMockClassName}"));
     return Extension((_) => _
-      ..name = "${mockDef.type.displayNameUnique}AsMockExtension"
-      ..on = refer(mockDef.type.displayNameWithPrefix)
+      ..name = "${mockDef.type.nameUnique}AsMockExtension"
+      ..on = refer(mockDef.type.nameWithPrefix)
       ..methods.addAll([asMockMethod]));
   }
 }
