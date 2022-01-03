@@ -1,24 +1,24 @@
 name: example
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  mockito_builder_annotations: ^0.2.2
-  analyzer: ^0.39.0
+  analyzer: '>=1.7.0 <4.0.0'
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^1.7.2
-  mockito_builder: ^0.2.2
-  mockito: ^4.1.1
+  build_runner: ^2.0.0
+  mockor: ^0.4.0
+  mockito: ^5.0.0
+  mocktail: 0.2.0
 
 dependency_overrides:
-  mockito_builder:
+  mockor:
     path: ../
 
 # For information on the generic Dart part of this file, see the
