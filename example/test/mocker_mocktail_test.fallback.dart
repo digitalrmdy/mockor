@@ -7,7 +7,7 @@
 // **************************************************************************
 
 import 'package:mocktail/mocktail.dart' as _i1;
-import 'mocker_mocktail.dart' as _i2;
+import 'mocker_mocktail_test.dart' as _i2;
 import 'models/model_a.dart' as _i3;
 import 'models/model_b.dart' as _i4;
 

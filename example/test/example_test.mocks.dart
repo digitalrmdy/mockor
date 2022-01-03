@@ -20,14 +20,10 @@ import 'models/model_b.dart' as _i4;
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockExampleUseCase extends _i1.Mock implements _i2.ExampleUseCase {
-  MockExampleUseCase() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
-  int example(_i2.ExampleModel? model) =>
-      (super.noSuchMethod(Invocation.method(#example, [model]), returnValue: 0)
-          as int);
+  int exampleInt(_i2.ExampleModel? model) => (super
+          .noSuchMethod(Invocation.method(#exampleInt, [model]), returnValue: 0)
+      as int);
   @override
   String toString() => super.toString();
 }
@@ -36,12 +32,8 @@ class MockExampleUseCase extends _i1.Mock implements _i2.ExampleUseCase {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockExampleUseCase2 extends _i1.Mock implements _i2.ExampleUseCase2 {
-  MockExampleUseCase2() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
-  void example2() => super.noSuchMethod(Invocation.method(#example2, []),
+  void exampleVoid() => super.noSuchMethod(Invocation.method(#exampleVoid, []),
       returnValueForMissingStub: null);
   @override
   String toString() => super.toString();
@@ -51,10 +43,6 @@ class MockExampleUseCase2 extends _i1.Mock implements _i2.ExampleUseCase2 {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockModelAModel extends _i1.Mock implements _i3.Model {
-  MockModelAModel() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   String toString() => super.toString();
 }
@@ -63,10 +51,6 @@ class MockModelAModel extends _i1.Mock implements _i3.Model {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockModelBModel extends _i1.Mock implements _i4.Model {
-  MockModelBModel() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   String toString() => super.toString();
 }

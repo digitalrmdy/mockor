@@ -2,10 +2,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockor/mockor.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'mocker_mocktail.fallback.dart';
+import 'mocker_mocktail_test.fallback.dart';
 import 'models/model_a.dart' as ModelA;
 import 'models/model_b.dart' as ModelB;
-part 'mocker_mocktail.mockor.dart';
+part 'mocker_mocktail_test.mockor.dart';
 
 abstract class MockerMocktailUseCase {
   int test(int i);
@@ -17,6 +17,7 @@ abstract class MockerMocktailUseCase {
   void test7(Model5<Model4> model5);
   void test8(ModelA.Model modelA, ModelB.Model modelB);
   void test9(Model6 model6);
+  void testNullable(int? i);
 }
 
 class _Model {}
@@ -41,7 +42,8 @@ class Model6 {}
     autoDetect: true,
   ),
 )
-T _mock<T extends Object>() => _$_mock<T>();
+T _mock<T extends Object>({bool relaxed = true}) =>
+    _$_mock<T>(relaxed: relaxed);
 
 void registerFallbackValuesAll() {
   _$registerFallbackValues();
@@ -50,11 +52,13 @@ void registerFallbackValuesAll() {
 
 void main() {
   late MockerMocktailUseCase useCase;
+  late MockerMocktailUseCase useCaseNotRelaxed;
   setUpAll(() {
     registerFallbackValuesAll();
   });
   setUp(() {
-    useCase = _mock();
+    useCase = _mock(relaxed: true);
+    useCaseNotRelaxed = _mock(relaxed: false);
   });
   test("`when` with any() doesn't crash and works as expected", () {
     when(() => useCase.test(any())).thenReturn(1);
@@ -72,5 +76,36 @@ void main() {
     final model = _Model2();
     when(() => useCase.test3(any())).thenReturn(model);
     expect(useCase.test3(_Model2()), model);
+  });
+  group("relaxed", () {
+    group("given relaxed is true", () {
+      test("then don't throw exception on nullable method not stubbed", () {
+        useCase.testNullable(0);
+      });
+      test("then throw typeError on non null method not stubbed", () {
+        try {
+          useCase.test(0);
+        } on TypeError {
+        } on MissingStubError {
+          fail("did not expect $MissingStubError");
+        }
+      });
+    });
+    group("given relaxed is false", () {
+      test("then throw $MissingStubError on nullable method not stubbed", () {
+        try {
+          useCaseNotRelaxed.testNullable(0);
+          fail("expected $MissingStubError");
+        } on MissingStubError {}
+      });
+      test("then throw $MissingStubError on non null method not stubbed", () {
+        try {
+          useCaseNotRelaxed.test(0);
+        } on MissingStubError {
+        } on TypeError {
+          fail("did not expect $TypeError");
+        }
+      });
+    });
   });
 }
