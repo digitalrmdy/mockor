@@ -1,3 +1,7 @@
+## 1.0.2
+
+- Bump minimal analyzer version to 2.0.0
+
 ## 1.0.1
 
 - Improve package description

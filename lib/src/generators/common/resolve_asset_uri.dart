@@ -71,8 +71,7 @@ Future<Map<InterfaceType, String>> resolveAssetUris(
   for (final type in dartTypes) {
     final element = type.element;
     final elementLibrary = element.library;
-    final elementLibraryName = elementLibrary.name ?? '';
-    if (elementLibrary.isInSdk && !elementLibraryName.startsWith('dart._')) {
+    if (elementLibrary.isInSdk && !elementLibrary.name.startsWith('dart._')) {
       // For public SDK libraries, just use the source URI.
       typeUris[type] = elementLibrary.source.uri.toString();
       continue;
