@@ -1,8 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
-import 'mocker_with_custom_mockito_annotation.mocks.dart';
+import 'package:mockito/mockito.dart';
+import 'mocker_with_custom_mockito_annotation_test.mocks.dart';
 import 'package:mockor/mockor.dart';
-part 'mocker_with_custom_mockito_annotation.mockor.dart';
+part 'mocker_with_custom_mockito_annotation_test.mockor.dart';
 
 abstract class MockerWithCustomMockitoUseCase {
   void test();
@@ -14,9 +15,15 @@ abstract class MockerWithCustomMockitoUseCase2 {
 
 @GenerateMocker([MockerWithCustomMockitoUseCase],
     generateMockitoAnnotation: false)
-@GenerateMocks(
-    [MockerWithCustomMockitoUseCase, MockerWithCustomMockitoUseCase2])
-T _mock<T extends Object>() => _$_mock<T>();
+@GenerateMocks([
+  MockerWithCustomMockitoUseCase,
+  MockerWithCustomMockitoUseCase2
+], customMocks: [
+  MockSpec<MockerWithCustomMockitoUseCase>(
+      as: #MockerWithCustomMockitoUseCaseRelaxed, returnNullOnMissingStub: true)
+])
+T _mock<T extends Object>({bool relaxed = false}) =>
+    _$_mock<T>(relaxed: relaxed);
 
 void main() {
   test(
@@ -37,5 +44,10 @@ void main() {
       _mock<MockerWithCustomMockitoUseCase2>();
       fail("expected exception");
     } on UnimplementedError {}
+  });
+  test("MockerWithCustomMockitoUseCaseRelaxed gets generated", () {
+    MockerWithCustomMockitoUseCase useCase =
+        MockerWithCustomMockitoUseCaseRelaxed();
+    useCase.test();
   });
 }

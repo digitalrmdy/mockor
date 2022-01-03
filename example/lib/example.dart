@@ -16,18 +16,19 @@ import 'package:mockor/mockor.dart';
 part 'example.mockor.dart';
 
 abstract class ExampleUseCase {
-  int example(int i);
+  int exampleInt(int i);
 }
 
 abstract class ExampleUseCase2 {
-  void example2();
+  int? exampleNullableInt();
+  void exampleVoid();
 }
 
 @GenerateMocker([
   ExampleUseCase,
   ExampleUseCase2,
 ])
-T mock<T extends Object>() => _$mock<T>();
+T mock<T extends Object>({bool relaxed = false}) => _$mock<T>(relaxed: relaxed);
 
 void main() {
   late ExampleUseCase exampleUseCase;
@@ -38,21 +39,42 @@ void main() {
     exampleUseCase = mock();
     exampleUseCase2 = mock();
   });
-  test("given example2 throws an exception then don't catch it", () {
-    when(exampleUseCase2.example2()).thenThrow(Exception());
+  test("given exampleNullableInt throws an exception then don't catch it", () {
+    when(exampleUseCase2.exampleNullableInt()).thenThrow(Exception());
     try {
-      exampleUseCase2.example2();
+      exampleUseCase2.exampleNullableInt();
       fail('expected exception');
     } on Exception {}
   });
-  test('given example with any param returns 2 then return 2', () {
+  test('given exampleInt with any param returns 2 then return 2', () {
     /**
      * By default an `asMock` extension method will be generated for all [GenerateMocker.types]
      * which casts it as generated mocked type (MockExampleUseCase).
      * Due to null safety we can only use the [any] matcher on non null params when using the mocked type.
      * Please read Mockito's [Null Safety README](https://github.com/dart-lang/mockito/blob/master/NULL_SAFETY_README.md) for more info.
      */
-    when(exampleUseCase.asMock().example(any)).thenReturn(2);
-    expect(exampleUseCase.example(1), 2);
+    when(exampleUseCase.asMock().exampleInt(any)).thenReturn(2);
+    expect(exampleUseCase.exampleInt(1), 2);
+  });
+  test("given relaxed is true then return null on non null method not stubbed",
+      () {
+    final ExampleUseCase2 useCaseRelaxed = mock(relaxed: true);
+    try {
+      useCaseRelaxed.exampleNullableInt();
+    } on MissingStubError {
+      fail("did not expect $MissingStubError");
+    }
+  });
+
+  //NOTE: this test only succeeds in `mockito` and not in `mocktail`
+  test(
+      "given relaxed is false then don't throw exception on void method not stubbed",
+      () {
+    final ExampleUseCase2 useCase = mock(relaxed: false);
+    try {
+      useCase.exampleVoid();
+    } on MissingStubError {
+      fail("did not $MissingStubError");
+    }
   });
 }

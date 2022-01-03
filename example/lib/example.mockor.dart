@@ -8,13 +8,30 @@ part of example;
 // MockerGenerator
 // **************************************************************************
 
-@GenerateMocks([ExampleUseCase, ExampleUseCase2])
-dynamic _$mock<T extends Object>() {
+@GenerateMocks([], customMocks: [
+  MockSpec<ExampleUseCase>(
+    as: #MockExampleUseCase,
+    returnNullOnMissingStub: true,
+  ),
+  MockSpec<ExampleUseCase2>(
+    as: #MockExampleUseCase2,
+    returnNullOnMissingStub: true,
+  ),
+])
+dynamic _$mock<T extends Object>({bool relaxed = false}) {
   switch (T) {
     case ExampleUseCase:
-      return MockExampleUseCase();
+      final mock = MockExampleUseCase();
+      if (!relaxed) {
+        throwOnMissingStub(mock);
+      }
+      return mock;
     case ExampleUseCase2:
-      return MockExampleUseCase2();
+      final mock = MockExampleUseCase2();
+      if (!relaxed) {
+        throwOnMissingStub(mock);
+      }
+      return mock;
     default:
       throw UnimplementedError(
           '''Error, a mock class for '$T' has not been generated yet.

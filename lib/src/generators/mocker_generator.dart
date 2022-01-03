@@ -69,7 +69,7 @@ class MockerGenerator extends GeneratorForAnnotation<GenerateMocker> {
                 mockDefNaming: generateMocker.useMockitoGeneratedTypes
                     ? MockDefNaming.MOCKITO
                     : MockDefNaming.INTERNAL,
-                returnNullOnMissingStub: false,
+                returnNullOnMissingStub: true,
                 generateExtension: generateMocker.generateMockExtensions,
                 type: t,
               ))

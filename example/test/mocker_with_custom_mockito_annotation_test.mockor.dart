@@ -2,16 +2,20 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: non_constant_identifier_names
 
-part of 'mocker_with_custom_mockito_annotation.dart';
+part of 'mocker_with_custom_mockito_annotation_test.dart';
 
 // **************************************************************************
 // MockerGenerator
 // **************************************************************************
 
-dynamic _$_mock<T extends Object>() {
+dynamic _$_mock<T extends Object>({bool relaxed = false}) {
   switch (T) {
     case MockerWithCustomMockitoUseCase:
-      return MockMockerWithCustomMockitoUseCase();
+      final mock = MockMockerWithCustomMockitoUseCase();
+      if (!relaxed) {
+        throwOnMissingStub(mock);
+      }
+      return mock;
     default:
       throw UnimplementedError(
           '''Error, a mock class for '$T' has not been generated yet.

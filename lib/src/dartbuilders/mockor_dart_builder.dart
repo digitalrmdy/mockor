@@ -53,7 +53,11 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
     list.add("switch(T) {");
     mockorConfig.mockDefs.forEach((mockDef) {
       list.add("case ${mockDef.type.nameWithPrefix}:");
-      list.add("return ${mockDef.targetMockClassName}();");
+      list.add("final mock = ${mockDef.targetMockClassName}();");
+      list.add("if (!relaxed) {");
+      list.add("throwOnMissingStub(mock);");
+      list.add("}");
+      list.add("return mock;");
     });
     list.add(
         "default: throw UnimplementedError(\'\'\'${createUnimplementedErrorMessage(mockorConfig)}\'\'\');");
@@ -104,6 +108,14 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
     });
   }
 
+  Parameter _buildRelaxedParam() {
+    return Parameter((b) => b
+      ..name = "relaxed"
+      ..defaultTo = Code("false")
+      ..named = true
+      ..type = refer('bool'));
+  }
+
   Method _buildMockerMethod(MockorConfig mockorConfig) {
     final name = mockorConfig.mockerName;
     return Method((b) {
@@ -112,6 +124,7 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
       }
       b
         ..name = "_\$$name"
+        ..optionalParameters.add(_buildRelaxedParam())
         ..returns = refer('dynamic')
         ..types.add(refer("T extends Object"))
         ..body = _createMockerMethodBody(mockorConfig);

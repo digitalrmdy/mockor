@@ -8,27 +8,50 @@ part of 'example_test.dart';
 // MockerGenerator
 // **************************************************************************
 
-@GenerateMocks([
-  ExampleUseCase,
-  ExampleUseCase2
-], customMocks: [
+@GenerateMocks([], customMocks: [
+  MockSpec<ExampleUseCase>(
+    as: #MockExampleUseCase,
+    returnNullOnMissingStub: true,
+  ),
+  MockSpec<ExampleUseCase2>(
+    as: #MockExampleUseCase2,
+    returnNullOnMissingStub: true,
+  ),
   MockSpec<ModelA.Model>(
     as: #MockModelAModel,
+    returnNullOnMissingStub: true,
   ),
   MockSpec<ModelB.Model>(
     as: #MockModelBModel,
+    returnNullOnMissingStub: true,
   ),
 ])
-dynamic _$_mock<T extends Object>() {
+dynamic _$_mock<T extends Object>({bool relaxed = false}) {
   switch (T) {
     case ExampleUseCase:
-      return MockExampleUseCase();
+      final mock = MockExampleUseCase();
+      if (!relaxed) {
+        throwOnMissingStub(mock);
+      }
+      return mock;
     case ExampleUseCase2:
-      return MockExampleUseCase2();
+      final mock = MockExampleUseCase2();
+      if (!relaxed) {
+        throwOnMissingStub(mock);
+      }
+      return mock;
     case ModelA.Model:
-      return MockModelAModel();
+      final mock = MockModelAModel();
+      if (!relaxed) {
+        throwOnMissingStub(mock);
+      }
+      return mock;
     case ModelB.Model:
-      return MockModelBModel();
+      final mock = MockModelBModel();
+      if (!relaxed) {
+        throwOnMissingStub(mock);
+      }
+      return mock;
     default:
       throw UnimplementedError(
           '''Error, a mock class for '$T' has not been generated yet.

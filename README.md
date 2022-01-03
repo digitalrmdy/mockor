@@ -86,23 +86,55 @@ part 'mocker.mockor.dart';
   generateMockitoAnnotation: false,
   useMockitoGeneratedTypes: false,
   // optionally generate fallback values for non null params to use `any()`
-  generateMocktailFallbackValues: GenerateMocktailFallbackValues([ExampleModel]),
+  generateMocktailFallbackValues: GenerateMocktailFallbackValues(
+    [ExampleModel],
+    // optionally register a mock class for all the non primitive parameters of all the methods in each class of [GenerateMocker.types] automatically.
+    autoDetect: true,
+  ),
 )
 T mock<T extends Object>() => _$_mock<T>();
 
 void registerFallbackValuesAll() {
   _$registerFallbackValues();
 }
-
-
 ```
+
+## Optional `relaxed` param to return null on missing stub
+
+The `_$mock<T>()` method takes in an optional `bool` parameter named `relaxed`. 
+
+If it's `false`, `throwOnMissingStub` is called on the `Mock` object with so that you get exceptions when you try to call a method that is not stubbed.
+
+However if it's `true`, a `TypeError` is thrown when the method has a non null return type. 
+On nullable return types, null is returned for missing stubs.
+
+It is `false` by default.
+
+NOTE: in Mockito 5.0.4+ `MissingStubError` is never thrown on `void` methods. But in Mocktail this is still the case.
+
+```dart
+T mock<T extends Object>({bool relaxed = false}) => _$mock<T>(relaxed: relaxed);
+
+final myService = mock<MyService>(relaxed: true);
+when(myService.doSomethingElse()).thenReturn(true);
+
+myService.doSomething(); // this will throw an exception
+myService.doSomethingElse(); // this will not throw an exception
+```
+
+For more info check out the example module.
 
 ## Main Advantage over vanilla Mockito
 
-You can always work with the base type:
+### You can always work with the base type
 - Renaming the class will not break tests.
 - Find usages will not miss anything
 - Never have to import/depend on mocks directly
+### Optional `relaxed` parameter at runtime
+An optional `relaxed` parameter is added to the generated `_$mock` method.
+When set to `true`, `null` is returned for missing nullable stubs. And `TypeError` for non null missing stubs.
+
+This is further explained above.
 
 ## Advantage over vanilla Mocktail
 ### Fast Code Generation
@@ -113,9 +145,13 @@ The generated mock classes are private so cannot be imported. Simply call the gl
 This makes it easier for all developers to follow consistent code conventions.
 ### Generate `registerFallbackValues` function
 An annoying drawback of mocktail is that you need to register fallback values if you want to call the `any()` function on them.
-With Mockor, you can generate a `registerFallbackValues` function where you only need to specify the types. 
-In future versions, the fallback value types could be detected automatically by going over all the functions of the mocker classes. 
+With Mockor, you can generate a `registerFallbackValues` function where you can either specify the types manually or let the generator auto detect them.
+Check getting started above for more info.
+### Optional `relaxed` parameter
+An optional `relaxed` parameter is added to the generated `_$mock` method.
+When set to `true`, `null` is returned for missing nullable stubs. And `TypeError` for non null missing stubs.
 
+This is further explained above.
 ## FAQ
 ### How can I hide the generated mock classes from auto import?
 

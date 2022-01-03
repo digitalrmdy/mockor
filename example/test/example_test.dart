@@ -9,13 +9,14 @@ import 'models/model_b.dart' as ModelB;
 part 'example_test.mockor.dart';
 
 abstract class ExampleUseCase {
-  int example(ExampleModel model);
+  int exampleInt(ExampleModel model);
 }
 
 class ExampleModel {}
 
 abstract class ExampleUseCase2 {
-  void example2();
+  void exampleVoid();
+  int? exampleNullableInt();
 }
 
 class ExampleUseCase3 {}
@@ -26,7 +27,8 @@ class ExampleUseCase3 {}
   ModelA.Model,
   ModelB.Model,
 ])
-T _mock<T extends Object>() => _$_mock<T>();
+T _mock<T extends Object>({bool relaxed = false}) =>
+    _$_mock<T>(relaxed: relaxed);
 void main() {
   late ExampleUseCase exampleUseCase;
   late ExampleUseCase2 exampleUseCase2;
@@ -43,9 +45,9 @@ void main() {
     modelB = _mock();
   });
   test("given example2 throws an exception then don't catch it", () {
-    when(exampleUseCase2.example2()).thenThrow(Exception());
+    when(exampleUseCase2.exampleVoid()).thenThrow(Exception());
     try {
-      exampleUseCase2.example2();
+      exampleUseCase2.exampleVoid();
       fail('expected exception');
     } on Exception {}
   });
@@ -56,8 +58,8 @@ void main() {
      * Due to null safety we can only use the [any] matcher on non null params when using mock type.
      * Please read the [Null Safety README](https://github.com/dart-lang/mockito/blob/master/NULL_SAFETY_README.md) for more info.
      */
-    when(exampleUseCase.asMock().example(any)).thenReturn(2);
-    expect(exampleUseCase.example(ExampleModel()), 2);
+    when(exampleUseCase.asMock().exampleInt(any)).thenReturn(2);
+    expect(exampleUseCase.exampleInt(ExampleModel()), 2);
   });
 
   test('throw unimplemented error when mock class not generated', () {
@@ -69,5 +71,48 @@ void main() {
     } catch (e) {
       fail("expected 'UnimplementedError'");
     }
+  });
+  group("relaxed", () {
+    group("given relaxed is true", () {
+      test("then don't throw exception on nullable method not stubbed", () {
+        final ExampleUseCase2 useCase = _mock(relaxed: true);
+        useCase..exampleVoid();
+      });
+      test("then throw typeError on non null method not stubbed", () {
+        final ExampleUseCase useCase = _mock(relaxed: true);
+        try {
+          useCase.asMock().exampleInt(null);
+        } on TypeError {
+        } on MissingStubError {
+          fail("did not expect $MissingStubError");
+        }
+      });
+    });
+    group("given relaxed is false", () {
+      test("then throw $MissingStubError on nullable method not stubbed", () {
+        final ExampleUseCase2 useCase = _mock(relaxed: false);
+        try {
+          useCase.exampleNullableInt();
+          fail("expected $MissingStubError");
+        } on MissingStubError {}
+      });
+      test("then throw don't exception on void method not stubbed", () {
+        final ExampleUseCase2 useCase = _mock(relaxed: false);
+        try {
+          useCase.exampleVoid();
+        } on MissingStubError {
+          fail("did not $MissingStubError");
+        }
+      });
+      test("then throw $MissingStubError on non null method not stubbed", () {
+        final ExampleUseCase useCase = _mock(relaxed: false);
+        try {
+          useCase.asMock().exampleInt(null);
+        } on MissingStubError {
+        } on TypeError {
+          fail("did not expect $TypeError");
+        }
+      });
+    });
   });
 }
