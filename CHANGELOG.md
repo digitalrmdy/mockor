@@ -1,3 +1,20 @@
-## [0.0.1] - TODO: Add release date.
+## 1.1.0
 
-* TODO: Describe initial release.
+- add optional `relaxed` parameter to `_$mock` method.
+
+## 1.0.2
+
+- Bump minimal `analyzer` version to 2.0.0
+
+## 1.0.1
+
+- Improve package description
+- Move builder.dart to src folder.
+- Fix compatibility with `analyzer` 1.7.0
+- Change annotations package to mockor.
+
+## 1.0.0
+
+- Initial release
+ 
+`mockor` was formally known as [mockito_builder](https://pub.dev/packages/mockito_builder)
