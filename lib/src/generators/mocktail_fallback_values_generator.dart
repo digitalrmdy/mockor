@@ -32,11 +32,10 @@ class MocktailFallbackValuesGenerator
     return null;
   }
 
-  //TODO handle super types
   Set<InterfaceType> findNonNullFunctionParamsForType(InterfaceType type) {
     final results = <InterfaceType>{};
-    final element = type.element;
-    for (final method in element.methods) {
+    final executableElements = type.findAllExecutableElements();
+    for (final method in executableElements) {
       if (method.isStatic) {
         continue;
       }

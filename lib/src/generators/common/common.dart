@@ -206,3 +206,15 @@ extension IterableExtension<T> on Iterable<T> {
     return null;
   }
 }
+
+extension InterfaceTypeExtension on InterfaceType {
+  List<ExecutableElement> findAllExecutableElements() {
+    final list = <ExecutableElement>[];
+    list.addAll(accessors);
+    list.addAll(methods);
+    allSupertypes.forEach((element) {
+      list.addAll(element.findAllExecutableElements());
+    });
+    return list;
+  }
+}

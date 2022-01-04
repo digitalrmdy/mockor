@@ -1,15 +1,16 @@
 ## 1.2.0
 
-- add optional `relaxedVoid` parameter to `_$mock` method for `mocktail`. 
+- Add optional `relaxedVoid` parameter to `_$mock` method for `mocktail`. 
+- Look in super types for `mocktail` fallback values 
 - Improve mocktail docs.
 
 ## 1.1.1
 
-- fix homepage
+- Fix homepage
 
 ## 1.1.0
 
-- add optional `relaxed` parameter to `_$mock` method.
+- Add optional `relaxed` parameter to `_$mock` method.
 
 ## 1.0.2
 

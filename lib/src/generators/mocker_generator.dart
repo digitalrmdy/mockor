@@ -47,7 +47,7 @@ class MockerGenerator extends GeneratorForAnnotation<GenerateMocker> {
     final type = resolvedType.dartType;
     final futureVoidMethods = <String>{};
     final voidMethods = <String>{};
-    final executableElements = type.findExecutableElements();
+    final executableElements = type.findAllExecutableElements();
     for (final executableElement in executableElements) {
       final returnType = executableElement.returnType.toVoidReturnType();
       if (returnType == null) continue;
@@ -144,17 +144,5 @@ extension on DartType {
       }
     }
     return null;
-  }
-}
-
-extension on InterfaceType {
-  List<ExecutableElement> findExecutableElements() {
-    final list = <ExecutableElement>[];
-    list.addAll(accessors);
-    list.addAll(methods);
-    allSupertypes.forEach((element) {
-      list.addAll(element.findExecutableElements());
-    });
-    return list;
   }
 }

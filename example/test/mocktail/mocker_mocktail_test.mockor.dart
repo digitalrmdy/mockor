@@ -65,9 +65,11 @@ void _$MockerMocktailUseCaseExceptionBuilder(Invocation inv, bool relaxed) {
     case #testVoid:
     case #[]:
     case #[]=:
+    case #test10:
       return null;
     case #testFutureVoid:
     case #testFutureOrVoid:
+    case #test11:
       throw MissingFutureVoidStubException();
     default:
       relaxed ? throw MissingNullStubException() : throw MissingStubError(inv);

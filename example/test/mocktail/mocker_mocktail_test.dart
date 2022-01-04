@@ -9,15 +9,32 @@ import '../models/model_a.dart' as ModelA;
 import '../models/model_b.dart' as ModelB;
 part 'mocker_mocktail_test.mockor.dart';
 
-abstract class MockerMocktailUseCase {
+abstract class MockerMocktailUseCaseBase1 {
+  void test10();
+  Future<void> test11();
+  void test9(Model6 model6);
+  void test5({Model3 model3});
+}
+
+abstract class MockerMocktailUseCaseBase2
+    implements MockerMocktailUseCaseBase1 {
+  @override
+  void test9(Model6 model6);
+  @override
+  void test5({Model3 model3, Model7 model7});
+}
+
+abstract class MockerMocktailUseCase implements MockerMocktailUseCaseBase2 {
   int test(int i);
   _Model test2(_Model model);
   _Model2 test3(_Model2 model);
   void test4(Model3 model3);
-  void test5({required Model3 model3});
+  @override
+  void test5({Model3 model3, Model7 model7 = const Model7()});
   void test6({Model4? model4});
   void test7(Model5<Model4> model5);
   void test8(ModelA.Model modelA, ModelB.Model modelB);
+  @override
   void test9(Model6 model6);
   void testVoid(int? i);
   int? testNullable();
@@ -40,8 +57,13 @@ class Model5<T> {}
 
 class Model6 {}
 
+class Model7 {
+  const Model7();
+}
+
 @GenerateMocker.mocktail(
   [MockerMocktailUseCase],
+  generateRelaxedVoidParameter: true,
   generateMocktailFallbackValues: GenerateMocktailFallbackValues(
     [_Model2, MockerMocktailUseCase, Model6],
     autoDetect: true,
