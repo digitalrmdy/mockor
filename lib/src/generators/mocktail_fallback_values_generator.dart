@@ -32,39 +32,41 @@ class MocktailFallbackValuesGenerator
     return null;
   }
 
-  List<InterfaceType> findNonNullFunctionParamsForType(DartType type) {
-    final results = <InterfaceType>[];
+  //TODO handle super types
+  Set<InterfaceType> findNonNullFunctionParamsForType(InterfaceType type) {
+    final results = <InterfaceType>{};
     final element = type.element;
-    if (element is ClassElement) {
-      element.methods.forEach((method) {
-        method.parameters.forEach((param) {
-          final type = param.type;
-          final paramElement = param.type.element;
-          if (paramElement is ClassElement &&
-              !paramElement.isPrivate &&
-              type.nullabilitySuffix == NullabilitySuffix.none) {
-            try {
-              validateDartType(type, error);
-              final interfaceType = type as InterfaceType;
-              if (interfaceType.typeArguments.isEmpty) {
-                results.add(type);
-              }
-            } on MockorException {
-              // ignore
+    for (final method in element.methods) {
+      if (method.isStatic) {
+        continue;
+      }
+      for (final param in method.parameters) {
+        final type = param.type;
+        final paramElement = param.type.element;
+        if (paramElement is ClassElement &&
+            !paramElement.isPrivate &&
+            type.nullabilitySuffix == NullabilitySuffix.none) {
+          try {
+            validateDartType(type, error);
+            final interfaceType = type as InterfaceType;
+            if (interfaceType.typeArguments.isEmpty) {
+              results.add(type);
             }
+          } on MockorException {
+            // ignore
           }
-        });
-      });
+        }
+      }
     }
     return results;
   }
 
-  List<DartType> findNonNullFunctionParamsForTypes(List<DartType> types) {
+  Set<InterfaceType> findNonNullFunctionParamsForTypes(
+      List<InterfaceType> types) {
     return types
         .map((type) => findNonNullFunctionParamsForType(type))
         .expand((element) => element)
-        .toSet()
-        .toList();
+        .toSet();
   }
 
   Future<MocktailFallbackValuesConfig?> _createConfig(
@@ -94,7 +96,6 @@ class MocktailFallbackValuesGenerator
             .makeUnique()
             .map((t) => MockDef(
                   mockDefNaming: MockDefNaming.INTERNAL,
-                  returnNullOnMissingStub: false,
                   generateExtension: false,
                   uri: assetUriMap[t.dartType],
                   type: t,

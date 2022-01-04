@@ -136,7 +136,7 @@ class ImportAliasTable {
   }
 }
 
-extension DartTypeExtension on List<DartType?> {
+extension DartTypeExtension on Iterable<DartType?> {
   Future<List<ResolvedType>> nonNullUniqueDartTypesOrThrow(
       ImportAliasTable importAliasTable,
       {required String attributeName}) async {
@@ -171,9 +171,9 @@ extension DartTypeExtension on List<DartType?> {
   }
 }
 
-extension ListExtension<T> on List<T> {
+extension IterableExtension<T> on Iterable<T> {
   // ignore: unused_element
-  List<T> onEach(test(T e)) {
+  Iterable<T> onEach(test(T e)) {
     forEach((element) {
       test(element);
     });
@@ -181,7 +181,7 @@ extension ListExtension<T> on List<T> {
   }
 
   // ignore: unused_element
-  List<T> onEachIndexed(test(int i, T e)) {
+  Iterable<T> onEachIndexed(test(int i, T e)) {
     var i = 0;
     forEach((element) {
       test(i, element);
@@ -191,8 +191,18 @@ extension ListExtension<T> on List<T> {
   }
 
   void forEachIndexed(void Function(int i, T item) block) {
-    for (var i = 0; i < length; i++) {
-      block(i, this[i]);
+    var i = 0;
+    for (final item in this) {
+      block(i, item);
+      i++;
     }
+  }
+
+  T? firstOrNull({bool Function(T)? where}) {
+    final test = where ?? (_) => true;
+    for (var element in this) {
+      if (test(element)) return element;
+    }
+    return null;
   }
 }

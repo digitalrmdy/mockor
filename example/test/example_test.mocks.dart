@@ -43,6 +43,14 @@ class MockExampleUseCase2 extends _i1.Mock implements _i2.ExampleUseCase2 {
           returnValue: Future<void>.value(),
           returnValueForMissingStub: Future<void>.value()) as _i3.Future<void>);
   @override
+  void operator [](String? key) =>
+      super.noSuchMethod(Invocation.method(#[], [key]),
+          returnValueForMissingStub: null);
+  @override
+  void operator []=(String? key, String? value) =>
+      super.noSuchMethod(Invocation.method(#[]=, [key, value]),
+          returnValueForMissingStub: null);
+  @override
   String toString() => super.toString();
 }
 

@@ -18,6 +18,8 @@ abstract class ExampleUseCase2 {
   void exampleVoid();
   Future<void> exampleFutureVoid();
   int? exampleNullableInt();
+  void operator [](String key);
+  void operator []=(String key, String value);
 }
 
 class ExampleUseCase3 {}

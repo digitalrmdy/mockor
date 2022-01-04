@@ -18,7 +18,8 @@ part of example;
     returnNullOnMissingStub: true,
   ),
 ])
-dynamic _$mock<T extends Object>({bool relaxed = false}) {
+dynamic _$mock<T extends Object>({bool? relaxed}) {
+  relaxed ??= false;
   switch (T) {
     case ExampleUseCase:
       final mock = MockExampleUseCase();

@@ -77,14 +77,13 @@ import 'package:mockor/mockor.dart';
 
 part 'mocker.mockor.dart';
 
-@GenerateMocker(
+@GenerateMocker.mocktail(
   [
     ExampleUseCase,
     ExampleUseCase2,
   ],
-  generateMockExtensions: false,
-  generateMockitoAnnotation: false,
-  useMockitoGeneratedTypes: false,
+  // optionally generated relaxedVoid parameter
+  generateRelaxedVoidParameter: true,
   // optionally generate fallback values for non null params to use `any()`
   generateMocktailFallbackValues: GenerateMocktailFallbackValues(
     [ExampleModel],
@@ -92,8 +91,10 @@ part 'mocker.mockor.dart';
     autoDetect: true,
   ),
 )
-T mock<T extends Object>({bool relaxed = false}) => _$_mock<T>(relaxed: relaxed);
+T mock<T extends Object>({bool relaxed = false, bool? relaxedVoid}) =>
+    _$_mock<T>(relaxed: relaxed, relaxedVoid: relaxedVoid);
 
+//define a global register fallback values method
 void registerFallbackValuesAll() {
   _$registerFallbackValues();
 }
