@@ -16,7 +16,10 @@ class ExampleModel {}
 
 abstract class ExampleUseCase2 {
   void exampleVoid();
+  Future<void> exampleFutureVoid();
   int? exampleNullableInt();
+  void operator [](String key);
+  void operator []=(String key, String value);
 }
 
 class ExampleUseCase3 {}
@@ -78,6 +81,15 @@ void main() {
         final ExampleUseCase2 useCase = _mock(relaxed: true);
         useCase..exampleVoid();
       });
+      test("then don't throw exception on Future<void> method not stubbed",
+          () async {
+        final ExampleUseCase2 useCase = _mock(relaxed: true);
+        try {
+          await useCase.exampleFutureVoid();
+        } on MissingStubError {
+          fail("did not $MissingStubError");
+        }
+      });
       test("then throw typeError on non null method not stubbed", () {
         final ExampleUseCase useCase = _mock(relaxed: true);
         try {
@@ -96,10 +108,20 @@ void main() {
           fail("expected $MissingStubError");
         } on MissingStubError {}
       });
-      test("then throw don't exception on void method not stubbed", () {
+      test("then don't throw exception on void method not stubbed", () {
         final ExampleUseCase2 useCase = _mock(relaxed: false);
         try {
           useCase.exampleVoid();
+        } on MissingStubError {
+          fail("did not $MissingStubError");
+        }
+      });
+
+      test("then don't throw exception on Future<void> method not stubbed",
+          () async {
+        final ExampleUseCase2 useCase = _mock(relaxed: false);
+        try {
+          await useCase.exampleFutureVoid();
         } on MissingStubError {
           fail("did not $MissingStubError");
         }

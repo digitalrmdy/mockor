@@ -26,7 +26,8 @@ part of 'example_test.dart';
     returnNullOnMissingStub: true,
   ),
 ])
-dynamic _$_mock<T extends Object>({bool relaxed = false}) {
+dynamic _$_mock<T extends Object>({bool? relaxed}) {
+  relaxed ??= false;
   switch (T) {
     case ExampleUseCase:
       final mock = MockExampleUseCase();

@@ -8,7 +8,8 @@ part of 'mocker_with_custom_mockito_annotation_test.dart';
 // MockerGenerator
 // **************************************************************************
 
-dynamic _$_mock<T extends Object>({bool relaxed = false}) {
+dynamic _$_mock<T extends Object>({bool? relaxed}) {
+  relaxed ??= false;
   switch (T) {
     case MockerWithCustomMockitoUseCase:
       final mock = MockMockerWithCustomMockitoUseCase();

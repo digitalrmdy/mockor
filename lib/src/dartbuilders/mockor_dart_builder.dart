@@ -26,18 +26,54 @@ class MockorDartBuilder {
             ..body.add(_buildRegisterFallbackValuesMethod(mockorConfig))
             ..body.addAll(newMocks.map(_buildMockClass).toList());
         }
+        final relaxedVoidMocks = mockDefsToGenerate
+            .where((element) => element.isRelaxedVoidSupported)
+            .toList();
+        if (relaxedVoidMocks.isNotEmpty) {
+          b.body.addAll(relaxedVoidMocks
+              .map(_buildRelaxedVoidExceptionBuilderMethod)
+              .toList());
+        }
       },
     );
     final emitter = DartEmitter();
     return DartFormatter().format('${lib.accept(emitter)}');
   }
 
+  Block _buildNoSuchMethodRelaxedVoidBody() {
+    final list = <String>[];
+    list.add("try {");
+    list.add(("return super.noSuchMethod(invocation);"));
+    list.add("} on $MissingFutureVoidStubException {");
+    list.add("return Future<void>.value();");
+    list.add("} on $MissingNullStubException {");
+    list.add("return null;");
+    list.add("}");
+    return Block.of(list.map((e) => Code(e)).toList());
+  }
+
+  Method _buildNoSuchMethodRelaxedVoid() {
+    return Method((b) => b
+      ..name = "noSuchMethod"
+      ..requiredParameters.add(Parameter((p) => p
+        ..name = "invocation"
+        ..type = refer("Invocation")))
+      ..returns = refer("dynamic")
+      ..annotations.add(refer("override"))
+      ..body = _buildNoSuchMethodRelaxedVoidBody());
+  }
+
   Class _buildMockClass(MockDef mockitoDef) {
     assert(mockitoDef.mockDefNaming == MockDefNaming.INTERNAL);
-    return Class((b) => b
-      ..name = mockitoDef.targetMockClassName
-      ..extend = refer("Mock")
-      ..implements.add(refer(mockitoDef.type.nameWithPrefix)));
+    return Class((b) {
+      if (mockitoDef.isRelaxedVoidSupported) {
+        b.methods.add(_buildNoSuchMethodRelaxedVoid());
+      }
+      b
+        ..name = mockitoDef.targetMockClassName
+        ..extend = refer("Mock")
+        ..implements.add(refer(mockitoDef.type.nameWithPrefix));
+    });
   }
 
   String createUnimplementedErrorMessage(MockorConfig mockorConfig) {
@@ -49,14 +85,26 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
 
   Block _createMockerMethodBody(MockorConfig mockorConfig) {
     final list = <String>[];
+    list.add("relaxed ??= ${!mockorConfig.hasMockitoGeneratedTypes};");
+    if (mockorConfig.addRelaxedVoidParam) {
+      list.add("relaxedVoid ??= relaxed;");
+    }
     // switch statement
     list.add("switch(T) {");
     mockorConfig.mockDefs.forEach((mockDef) {
       list.add("case ${mockDef.type.nameWithPrefix}:");
       list.add("final mock = ${mockDef.targetMockClassName}();");
-      list.add("if (!relaxed) {");
-      list.add("throwOnMissingStub(mock);");
-      list.add("}");
+
+      if (mockDef.isRelaxedVoidSupported) {
+        list.add("if (!relaxed || relaxedVoid) {");
+        list.add(
+            "throwOnMissingStub(mock, exceptionBuilder: relaxedVoid ? (env) => ${mockDef.relaxedVoidExceptionBuilderMethodName}(env, relaxed!) : null);");
+        list.add("}");
+      } else {
+        list.add("if (!relaxed) {");
+        list.add("throwOnMissingStub(mock);");
+        list.add("}");
+      }
       list.add("return mock;");
     });
     list.add(
@@ -66,23 +114,14 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
   }
 
   Expression _buildGenerateMocksAnnotation(MockorConfig mockorConfig) {
-    final mockDefsDefault = mockorConfig.mockDefsMockitoGenerated
-        .where((element) => !element.isCustomMock)
-        .toList();
-    final customMocks = mockorConfig.mockDefsMockitoGenerated
-        .where((element) => element.isCustomMock)
-        .toList();
-    final typesJoined = mockDefsDefault.map((e) => e.type).join(",");
-    var code = "GenerateMocks([$typesJoined]";
-    if (customMocks.isNotEmpty) {
+    final mockDefs = mockorConfig.mockDefsMockitoGenerated;
+    var code = "GenerateMocks([]";
+    if (mockDefs.isNotEmpty) {
       code += ", customMocks: [";
-      customMocks.forEach((mockDef) {
+      mockDefs.forEach((mockDef) {
         final customName = mockDef.targetMockClassName;
-        code += "MockSpec<${mockDef.type.nameWithPrefix}>(as: #$customName, ";
-        if (mockDef.returnNullOnMissingStub) {
-          code += "returnNullOnMissingStub: true, ";
-        }
-        code += "), ";
+        code +=
+            "MockSpec<${mockDef.type.nameWithPrefix}>(as: #$customName, returnNullOnMissingStub: true,), ";
       });
       code += "]";
     }
@@ -111,9 +150,15 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
   Parameter _buildRelaxedParam() {
     return Parameter((b) => b
       ..name = "relaxed"
-      ..defaultTo = Code("false")
       ..named = true
-      ..type = refer('bool'));
+      ..type = refer('bool?'));
+  }
+
+  Parameter _buildRelaxedVoidParam() {
+    return Parameter((b) => b
+      ..name = "relaxedVoid"
+      ..named = true
+      ..type = refer('bool?'));
   }
 
   Method _buildMockerMethod(MockorConfig mockorConfig) {
@@ -122,9 +167,12 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
       if (mockorConfig.generateMockitoAnnotation) {
         b.annotations.add(_buildGenerateMocksAnnotation(mockorConfig));
       }
+      b.optionalParameters.add(_buildRelaxedParam());
+      if (mockorConfig.addRelaxedVoidParam) {
+        b.optionalParameters.add(_buildRelaxedVoidParam());
+      }
       b
         ..name = "_\$$name"
-        ..optionalParameters.add(_buildRelaxedParam())
         ..returns = refer('dynamic')
         ..types.add(refer("T extends Object"))
         ..body = _createMockerMethodBody(mockorConfig);
@@ -141,5 +189,47 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
       ..name = "${mockDef.type.nameUnique}AsMockExtension"
       ..on = refer(mockDef.type.nameWithPrefix)
       ..methods.addAll([asMockMethod]));
+  }
+
+  Block _buildRelaxedVoidExceptionBuilderMethodBody(
+      MocktailRelaxedVoidConfig relaxedVoidConfig) {
+    final list = <String>[];
+    list.add("switch(inv.memberName) {");
+    final voidMethods = relaxedVoidConfig.voidMethodNames;
+    voidMethods.forEach((voidMethodName) {
+      list.add("case #$voidMethodName:");
+    });
+    if (voidMethods.isNotEmpty) {
+      list.add("return null;");
+    }
+    final futureVoidMethods = relaxedVoidConfig.futureVoidMethodNames;
+    futureVoidMethods.forEach((futureVoidMethodName) {
+      list.add("case #$futureVoidMethodName:");
+    });
+    if (futureVoidMethods.isNotEmpty) {
+      list.add("throw $MissingFutureVoidStubException();");
+    }
+    list.add("default:");
+    list.add(
+        "relaxed ? throw $MissingNullStubException() : throw MissingStubError(inv);");
+    list.add("}");
+
+    return Block.of(list.map((e) => Code(e)).toList());
+  }
+
+  Method _buildRelaxedVoidExceptionBuilderMethod(MockDef mockDef) {
+    final mocktailConfig = mockDef.mocktailRelaxedVoidConfig!;
+    return Method((b) => b
+      ..name = mockDef.relaxedVoidExceptionBuilderMethodName
+      ..requiredParameters.addAll([
+        Parameter((p) => p
+          ..name = "inv"
+          ..type = refer("Invocation")),
+        Parameter((p) => p
+          ..name = "relaxed"
+          ..type = refer("bool")),
+      ])
+      ..body = _buildRelaxedVoidExceptionBuilderMethodBody(mocktailConfig)
+      ..returns = refer("void"));
   }
 }

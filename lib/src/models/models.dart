@@ -5,24 +5,28 @@ class MockDef {
   final ResolvedType type;
   final MockDefNaming mockDefNaming;
   final bool generateExtension;
-  final bool returnNullOnMissingStub;
   final String? uri;
+
+  final MocktailRelaxedVoidConfig? mocktailRelaxedVoidConfig;
 
   const MockDef(
       {required this.type,
       required this.mockDefNaming,
       required this.generateExtension,
-      required this.returnNullOnMissingStub,
+      this.mocktailRelaxedVoidConfig,
       this.uri});
+
+  bool get isRelaxedVoidSupported => mocktailRelaxedVoidConfig != null;
 
   String _buildTarget(String prefix) => _buildTargetImpl(
       prefix: prefix, mockDefNaming: mockDefNaming, type: type.nameUnique);
 
   String get targetMockClassName => _buildTarget(_prefixMock);
 
-  bool get isCustomMock => type.prefix != null || returnNullOnMissingStub;
-
   String? get import => uri;
+
+  String get relaxedVoidExceptionBuilderMethodName =>
+      "_\$${type.nameUnique}ExceptionBuilder";
 
   @override
   bool operator ==(Object other) =>
@@ -62,6 +66,11 @@ class MockorConfig {
   List<MockDef> get mockDefsMockitoGenerated => mockDefs
       .where((element) => element.mockDefNaming == MockDefNaming.MOCKITO)
       .toList();
+
+  bool get addRelaxedVoidParam =>
+      mockDefs.any((element) => element.isRelaxedVoidSupported);
+
+  bool get hasMockitoGeneratedTypes => mockDefsMockitoGenerated.isNotEmpty;
 }
 
 enum MockDefNaming { MOCKITO, INTERNAL }
@@ -143,4 +152,14 @@ class MocktailFallbackValuesConfig {
   MocktailFallbackValuesConfig({required this.mocktailFallbackMockDefs});
 
   String get registerFallbackValuesName => "registerFallbackValuesAutoDetected";
+}
+
+enum VoidReturnType { Void, FutureVoid, FutureOrVoid }
+
+class MocktailRelaxedVoidConfig {
+  final List<String> futureVoidMethodNames;
+  final List<String> voidMethodNames;
+
+  MocktailRelaxedVoidConfig(
+      {required this.futureVoidMethodNames, required this.voidMethodNames});
 }

@@ -43,7 +43,7 @@ abstract class ExampleUseCase2 {
   ExampleUseCase,
   ExampleUseCase2,
 ])
-T mock<T extends Object>() => _$mock<T>();
+T mock<T extends Object>({bool relaxed = false}) => _$mock<T>(relaxed: relaxed);
 ```
 
 ### To use the generated mocks, simply import and call the defined mock function
@@ -77,14 +77,13 @@ import 'package:mockor/mockor.dart';
 
 part 'mocker.mockor.dart';
 
-@GenerateMocker(
+@GenerateMocker.mocktail(
   [
     ExampleUseCase,
     ExampleUseCase2,
   ],
-  generateMockExtensions: false,
-  generateMockitoAnnotation: false,
-  useMockitoGeneratedTypes: false,
+  // optionally generated relaxedVoid parameter
+  generateRelaxedVoidParameter: true,
   // optionally generate fallback values for non null params to use `any()`
   generateMocktailFallbackValues: GenerateMocktailFallbackValues(
     [ExampleModel],
@@ -92,10 +91,29 @@ part 'mocker.mockor.dart';
     autoDetect: true,
   ),
 )
-T mock<T extends Object>() => _$_mock<T>();
+T mock<T extends Object>({bool relaxed = false, bool? relaxedVoid}) =>
+    _$_mock<T>(relaxed: relaxed, relaxedVoid: relaxedVoid);
 
+//define a global register fallback values method
 void registerFallbackValuesAll() {
   _$registerFallbackValues();
+}
+```
+
+### Create `flutter_test_config.dart` in the root of your `test` folder.
+
+```dart
+import 'dart:async';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'mocker.dart';
+
+Future<void> testExecutable(FutureOr<void> Function() testMain) async {
+  // this will be executed before the main function of any test file in the test folder.
+  setUpAll(() {
+    registerFallbackValuesAll();
+  });
+  await testMain();
 }
 ```
 
