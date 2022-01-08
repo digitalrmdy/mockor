@@ -1,3 +1,7 @@
+## 1.2.1
+
+- Update README
+
 ## 1.2.0
 
 - Add optional `relaxedVoid` parameter to `_$mock` method for `mocktail`. 

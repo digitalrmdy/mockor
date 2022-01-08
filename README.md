@@ -82,7 +82,7 @@ part 'mocker.mockor.dart';
     ExampleUseCase,
     ExampleUseCase2,
   ],
-  // optionally generated relaxedVoid parameter
+  // optionally generate relaxedVoid parameter which prevents missing stub errors for `void` and `Future<void>`
   generateRelaxedVoidParameter: true,
   // optionally generate fallback values for non null params to use `any()`
   generateMocktailFallbackValues: GenerateMocktailFallbackValues(
@@ -126,9 +126,8 @@ If it's `false`, `throwOnMissingStub` is called on the `Mock` object with so tha
 However if it's `true`, a `TypeError` is thrown when the method has a non null return type. 
 On nullable return types, null is returned for missing stubs.
 
-It is `false` by default.
-
-NOTE: in Mockito 5.0.4+ `MissingStubError` is never thrown on `void` methods. But in Mocktail this is still the case.
+It is `true` by default for `mocktail`
+It is `false` by default for `mockito`
 
 ```dart
 T mock<T extends Object>({bool relaxed = false}) => _$mock<T>(relaxed: relaxed);
@@ -170,6 +169,9 @@ An optional `relaxed` parameter is added to the generated `_$mock` method.
 When set to `true`, `null` is returned for missing nullable stubs. And `TypeError` for non null missing stubs.
 
 This is further explained above.
+### Optional `relaxedVoid` parameter (`mocktail` only feature)
+An optional `relaxed` parameter is added to the generated `_$mock` method.
+When set to `true`, unstubbed `void`- and `Future<void>` methods don't throw errors.
 ## FAQ
 ### How can I hide the generated mock classes from auto import?
 
