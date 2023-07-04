@@ -16,6 +16,7 @@ dynamic _$_mock<T extends Object>({
   relaxedVoid ??= relaxed;
   switch (T) {
     case MockerMocktailUseCase:
+    case _$MockMockerMocktailUseCase:
       final mock = _$MockMockerMocktailUseCase();
       if (!relaxed || relaxedVoid) {
         throwOnMissingStub(mock,

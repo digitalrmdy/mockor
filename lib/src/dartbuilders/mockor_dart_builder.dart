@@ -89,6 +89,7 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
     list.add("switch(T) {");
     mockorConfig.mockDefs.forEach((mockDef) {
       list.add("case ${mockDef.type.nameWithPrefix}:");
+      list.add("case ${mockDef.targetMockClassName}:");
       list.add("final mock = ${mockDef.targetMockClassName}();");
 
       if (mockDef.isRelaxedVoidSupported) {

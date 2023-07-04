@@ -20,12 +20,14 @@ dynamic _$mock<T extends Object>({bool? relaxed}) {
   relaxed ??= false;
   switch (T) {
     case ExampleUseCase:
+    case MockExampleUseCase:
       final mock = MockExampleUseCase();
       if (!relaxed) {
         throwOnMissingStub(mock);
       }
       return mock;
     case ExampleUseCase2:
+    case MockExampleUseCase2:
       final mock = MockExampleUseCase2();
       if (!relaxed) {
         throwOnMissingStub(mock);

@@ -183,9 +183,6 @@ analyzer:
 ``` 
 
 ## Troubleshooting
-### "Error, a mock class for 'MockExampleUseCase' has not been generated yet."
-
-The mocker method only supports returning a mock instance for it's base type.
 
 ### Error when using `any`: "The argument type 'Null' can't be assigned to the parameter type..."
 To be able to use of `any`, you need the mocked type and not the base type. 
