@@ -8,22 +8,18 @@ part of 'example_test.dart';
 // MockerGenerator
 // **************************************************************************
 
-@GenerateMocks([], customMocks: [
+@GenerateNiceMocks([
   MockSpec<ExampleUseCase>(
     as: #MockExampleUseCase,
-    returnNullOnMissingStub: true,
   ),
   MockSpec<ExampleUseCase2>(
     as: #MockExampleUseCase2,
-    returnNullOnMissingStub: true,
   ),
   MockSpec<ModelA.Model>(
     as: #MockModelAModel,
-    returnNullOnMissingStub: true,
   ),
   MockSpec<ModelB.Model>(
     as: #MockModelBModel,
-    returnNullOnMissingStub: true,
   ),
 ])
 dynamic _$_mock<T extends Object>({bool? relaxed}) {

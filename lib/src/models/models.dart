@@ -18,22 +18,19 @@ class MockDef {
 
   bool get isRelaxedVoidSupported => mocktailRelaxedVoidConfig != null;
 
-  String _buildTarget(String prefix) => _buildTargetImpl(
-      prefix: prefix, mockDefNaming: mockDefNaming, type: type.nameUnique);
+  String _buildTarget(String prefix) =>
+      _buildTargetImpl(prefix: prefix, mockDefNaming: mockDefNaming, type: type.nameUnique);
 
   String get targetMockClassName => _buildTarget(_prefixMock);
 
   String? get import => uri;
 
-  String get relaxedVoidExceptionBuilderMethodName =>
-      "_\$${type.nameUnique}ExceptionBuilder";
+  String get relaxedVoidExceptionBuilderMethodName => "_\$${type.nameUnique}ExceptionBuilder";
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is MockDef &&
-          runtimeType == other.runtimeType &&
-          type == other.type;
+      other is MockDef && runtimeType == other.runtimeType && type == other.type;
 
   @override
   int get hashCode => type.hashCode;
@@ -49,26 +46,25 @@ class MockorConfig {
 
   final bool generateMockitoAnnotation;
 
+  final bool generateNiceMocks;
+
   final Set<MockDef>? mocktailFallbackMockDefs;
 
-  MockorConfig({
-    required this.mockDefs,
-    required this.mockerName,
-    required this.generateMockitoAnnotation,
-    required this.mocktailFallbackMockDefs,
-  });
+  MockorConfig(
+      {required this.mockDefs,
+      required this.mockerName,
+      required this.generateMockitoAnnotation,
+      required this.mocktailFallbackMockDefs,
+      required this.generateNiceMocks});
 
   String get registerFallbackValuesName => "_\$registerFallbackValues";
 
-  List<MockDef> get mockDefsToGenerate => mockDefs
-      .where((element) => element.mockDefNaming == MockDefNaming.INTERNAL)
-      .toList();
-  List<MockDef> get mockDefsMockitoGenerated => mockDefs
-      .where((element) => element.mockDefNaming == MockDefNaming.MOCKITO)
-      .toList();
+  List<MockDef> get mockDefsToGenerate =>
+      mockDefs.where((element) => element.mockDefNaming == MockDefNaming.INTERNAL).toList();
+  List<MockDef> get mockDefsMockitoGenerated =>
+      mockDefs.where((element) => element.mockDefNaming == MockDefNaming.MOCKITO).toList();
 
-  bool get addRelaxedVoidParam =>
-      mockDefs.any((element) => element.isRelaxedVoidSupported);
+  bool get addRelaxedVoidParam => mockDefs.any((element) => element.isRelaxedVoidSupported);
 
   bool get hasMockitoGeneratedTypes => mockDefsMockitoGenerated.isNotEmpty;
 }
@@ -78,9 +74,7 @@ enum MockDefNaming { MOCKITO, INTERNAL }
 const _prefixMock = "Mock";
 
 String _buildTargetImpl(
-    {required String prefix,
-    required MockDefNaming mockDefNaming,
-    required String type}) {
+    {required String prefix, required MockDefNaming mockDefNaming, required String type}) {
   var s = "";
   if (mockDefNaming == MockDefNaming.INTERNAL) {
     s += "_\$";
@@ -104,10 +98,7 @@ class ResolvedType {
 
   ResolvedType copyWith({required String? prefix}) {
     return ResolvedType(
-        name: name,
-        librarySource: librarySource,
-        prefix: prefix,
-        dartType: dartType);
+        name: name, librarySource: librarySource, prefix: prefix, dartType: dartType);
   }
 
   String get nameUnique {
@@ -160,6 +151,5 @@ class MocktailRelaxedVoidConfig {
   final List<String> futureVoidMethodNames;
   final List<String> voidMethodNames;
 
-  MocktailRelaxedVoidConfig(
-      {required this.futureVoidMethodNames, required this.voidMethodNames});
+  MocktailRelaxedVoidConfig({required this.futureVoidMethodNames, required this.voidMethodNames});
 }

@@ -2,20 +2,18 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: non_constant_identifier_names
 
-part of example;
+part of 'example.dart';
 
 // **************************************************************************
 // MockerGenerator
 // **************************************************************************
 
-@GenerateMocks([], customMocks: [
+@GenerateNiceMocks([
   MockSpec<ExampleUseCase>(
     as: #MockExampleUseCase,
-    returnNullOnMissingStub: true,
   ),
   MockSpec<ExampleUseCase2>(
     as: #MockExampleUseCase2,
-    returnNullOnMissingStub: true,
   ),
 ])
 dynamic _$mock<T extends Object>({bool? relaxed}) {

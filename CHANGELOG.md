@@ -1,3 +1,9 @@
+## 1.3.0
+
+- Update to Dart 3.0
+- Bump minimal `analyzer` version to 5.0.0
+- Add mockito nice mocks support
+
 ## 1.2.1
 
 - Update README

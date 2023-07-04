@@ -1,8 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'mocker_with_custom_mockito_annotation_test.mocks.dart';
 import 'package:mockor/mockor.dart';
+
+import 'mocker_with_custom_mockito_annotation_test.mocks.dart';
+
 part 'mocker_with_custom_mockito_annotation_test.mockor.dart';
 
 abstract class MockerWithCustomMockitoUseCase {
@@ -13,21 +15,15 @@ abstract class MockerWithCustomMockitoUseCase2 {
   void test();
 }
 
-@GenerateMocker([MockerWithCustomMockitoUseCase],
-    generateMockitoAnnotation: false)
-@GenerateMocks([
-  MockerWithCustomMockitoUseCase,
-  MockerWithCustomMockitoUseCase2
-], customMocks: [
-  MockSpec<MockerWithCustomMockitoUseCase>(
-      as: #MockerWithCustomMockitoUseCaseRelaxed, returnNullOnMissingStub: true)
+@GenerateMocker([MockerWithCustomMockitoUseCase], generateMockitoAnnotation: false)
+@GenerateNiceMocks([
+  MockSpec<MockerWithCustomMockitoUseCase>(),
+  MockSpec<MockerWithCustomMockitoUseCase>(as: #MockMockerWithCustomMockitoUseCaseRelaxed)
 ])
-T _mock<T extends Object>({bool relaxed = false}) =>
-    _$_mock<T>(relaxed: relaxed);
+T _mock<T extends Object>({bool relaxed = false}) => _$_mock<T>(relaxed: relaxed);
 
 void main() {
-  test(
-      "given MockerWithCustomMockitoUseCase type is provided to both annotations, it can be found",
+  test("given MockerWithCustomMockitoUseCase type is provided to both annotations, it can be found",
       () {
     try {
       MockerWithCustomMockitoUseCase useCase1 = _mock();
@@ -46,8 +42,7 @@ void main() {
     } on UnimplementedError {}
   });
   test("MockerWithCustomMockitoUseCaseRelaxed gets generated", () {
-    MockerWithCustomMockitoUseCase useCase =
-        MockerWithCustomMockitoUseCaseRelaxed();
+    MockerWithCustomMockitoUseCase useCase = MockMockerWithCustomMockitoUseCaseRelaxed();
     useCase.test();
   });
 }
