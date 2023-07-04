@@ -3,7 +3,7 @@
 - Update to Dart 3.0
 - Bump minimal `analyzer` version to 5.0.0
 - Add mockito nice mocks support
-- Fix `UnimplementedError` when mock method type is the mock variant
+- Fix `UnimplementedError` when resolved mock method type is the mock variant
 
 ## 1.2.1
 
