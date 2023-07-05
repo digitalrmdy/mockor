@@ -8,11 +8,15 @@ part of 'mocker_mocktail_test.dart';
 // MockerGenerator
 // **************************************************************************
 
-dynamic _$_mock<T extends Object>({bool? relaxed, bool? relaxedVoid}) {
+dynamic _$_mock<T extends Object>({
+  bool? relaxed,
+  bool? relaxedVoid,
+}) {
   relaxed ??= true;
   relaxedVoid ??= relaxed;
   switch (T) {
     case MockerMocktailUseCase:
+    case _$MockMockerMocktailUseCase:
       final mock = _$MockMockerMocktailUseCase();
       if (!relaxed || relaxedVoid) {
         throwOnMissingStub(mock,
@@ -54,7 +58,10 @@ class _$Mock_Model2 extends Mock implements _Model2 {}
 
 class _$MockModel6 extends Mock implements Model6 {}
 
-void _$MockerMocktailUseCaseExceptionBuilder(Invocation inv, bool relaxed) {
+void _$MockerMocktailUseCaseExceptionBuilder(
+  Invocation inv,
+  bool relaxed,
+) {
   switch (inv.memberName) {
     case #test4:
     case #test5:

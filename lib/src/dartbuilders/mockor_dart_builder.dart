@@ -19,20 +19,16 @@ class MockorDartBuilder {
         final mocktailFallbackMockDefs = mockorConfig.mocktailFallbackMockDefs;
         if (mocktailFallbackMockDefs != null) {
           final types = mockDefsToGenerate.map((e) => e.type).toList();
-          final newMocks = mocktailFallbackMockDefs
-              .where((element) => !types.contains(element.type))
-              .toList();
+          final newMocks =
+              mocktailFallbackMockDefs.where((element) => !types.contains(element.type)).toList();
           b
             ..body.add(_buildRegisterFallbackValuesMethod(mockorConfig))
             ..body.addAll(newMocks.map(_buildMockClass).toList());
         }
-        final relaxedVoidMocks = mockDefsToGenerate
-            .where((element) => element.isRelaxedVoidSupported)
-            .toList();
+        final relaxedVoidMocks =
+            mockDefsToGenerate.where((element) => element.isRelaxedVoidSupported).toList();
         if (relaxedVoidMocks.isNotEmpty) {
-          b.body.addAll(relaxedVoidMocks
-              .map(_buildRelaxedVoidExceptionBuilderMethod)
-              .toList());
+          b.body.addAll(relaxedVoidMocks.map(_buildRelaxedVoidExceptionBuilderMethod).toList());
         }
       },
     );
@@ -93,6 +89,7 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
     list.add("switch(T) {");
     mockorConfig.mockDefs.forEach((mockDef) {
       list.add("case ${mockDef.type.nameWithPrefix}:");
+      list.add("case ${mockDef.targetMockClassName}:");
       list.add("final mock = ${mockDef.targetMockClassName}();");
 
       if (mockDef.isRelaxedVoidSupported) {
@@ -115,16 +112,14 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
 
   Expression _buildGenerateMocksAnnotation(MockorConfig mockorConfig) {
     final mockDefs = mockorConfig.mockDefsMockitoGenerated;
-    var code = "GenerateMocks([]";
-    if (mockDefs.isNotEmpty) {
-      code += ", customMocks: [";
-      mockDefs.forEach((mockDef) {
-        final customName = mockDef.targetMockClassName;
-        code +=
-            "MockSpec<${mockDef.type.nameWithPrefix}>(as: #$customName, returnNullOnMissingStub: true,), ";
-      });
-      code += "]";
-    }
+    final methodName = mockorConfig.generateNiceMocks ? "GenerateNiceMocks" : "GenerateMocks";
+    final params = mockorConfig.generateNiceMocks ? "" : "[], customMocks: ";
+    var code = "$methodName($params[";
+    mockDefs.forEach((mockDef) {
+      final customName = mockDef.targetMockClassName;
+      code += "MockSpec<${mockDef.type.nameWithPrefix}>(as: #$customName,), ";
+    });
+    code += "]";
     code += ")";
     return CodeExpression(Code(code));
   }
@@ -191,8 +186,7 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
       ..methods.addAll([asMockMethod]));
   }
 
-  Block _buildRelaxedVoidExceptionBuilderMethodBody(
-      MocktailRelaxedVoidConfig relaxedVoidConfig) {
+  Block _buildRelaxedVoidExceptionBuilderMethodBody(MocktailRelaxedVoidConfig relaxedVoidConfig) {
     final list = <String>[];
     list.add("switch(inv.memberName) {");
     final voidMethods = relaxedVoidConfig.voidMethodNames;
@@ -210,8 +204,7 @@ Finally run the build command: \'flutter packages pub run build_runner build\'.'
       list.add("throw $MissingFutureVoidStubException();");
     }
     list.add("default:");
-    list.add(
-        "relaxed ? throw $MissingNullStubException() : throw MissingStubError(inv);");
+    list.add("relaxed ? throw $MissingNullStubException() : throw MissingStubError(inv);");
     list.add("}");
 
     return Block.of(list.map((e) => Code(e)).toList());

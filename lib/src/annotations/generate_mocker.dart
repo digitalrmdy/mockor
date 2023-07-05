@@ -44,6 +44,9 @@ class GenerateMocker {
   @experimental
   final bool generateRelaxedVoidParameter;
 
+  /// use `GenerateNiceMocks` annotation for `mockito` .
+  final bool generateNiceMocks;
+
   /// options for [mocktail](https://pub.dev/packages/mocktail).
   final GenerateMocktailFallbackValues? generateMocktailFallbackValues;
 
@@ -54,6 +57,7 @@ class GenerateMocker {
     this.generateMockitoAnnotation = true,
     this.generateMockExtensions = true,
     this.generateRelaxedVoidParameter = false,
+    this.generateNiceMocks = true,
     this.generateMocktailFallbackValues,
   });
 
@@ -64,6 +68,7 @@ class GenerateMocker {
     this.generateMockitoAnnotation = false,
     this.generateMockExtensions = false,
     this.generateRelaxedVoidParameter = false,
+    this.generateNiceMocks = false,
     this.generateMocktailFallbackValues,
   });
 }

@@ -6,6 +6,7 @@
 // MocktailFallbackValuesGenerator
 // **************************************************************************
 
+// ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:mocktail/mocktail.dart' as _i1;
 import 'mocker_mocktail_test.dart' as _i2;
 import '../models/model_a.dart' as _i3;

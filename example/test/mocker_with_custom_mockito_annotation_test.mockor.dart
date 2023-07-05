@@ -12,6 +12,7 @@ dynamic _$_mock<T extends Object>({bool? relaxed}) {
   relaxed ??= false;
   switch (T) {
     case MockerWithCustomMockitoUseCase:
+    case MockMockerWithCustomMockitoUseCase:
       final mock = MockMockerWithCustomMockitoUseCase();
       if (!relaxed) {
         throwOnMissingStub(mock);

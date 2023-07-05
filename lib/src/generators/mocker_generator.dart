@@ -17,8 +17,7 @@ class MockerGenerator extends GeneratorForAnnotation<GenerateMocker> {
   Future<String?> generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) async {
     try {
-      final mockorConfig =
-          await createMockorConfig(annotation, element, buildStep);
+      final mockorConfig = await createMockorConfig(annotation, element, buildStep);
       if (mockorConfig != null) {
         final dartBuilder = MockorDartBuilder();
         return dartBuilder.buildDartFile(mockorConfig);
@@ -31,13 +30,10 @@ class MockerGenerator extends GeneratorForAnnotation<GenerateMocker> {
   }
 
   void _validateGenerateMocker(GenerateMocker generateMocker) {
-    if (generateMocker.generateMockitoAnnotation &&
-        !generateMocker.useMockitoGeneratedTypes) {
-      error(
-          "if generateMockitoAnnotation is true then useMockitoGeneratedTypes must be true");
+    if (generateMocker.generateMockitoAnnotation && !generateMocker.useMockitoGeneratedTypes) {
+      error("if generateMockitoAnnotation is true then useMockitoGeneratedTypes must be true");
     }
-    if (generateMocker.generateRelaxedVoidParameter &&
-        generateMocker.useMockitoGeneratedTypes) {
+    if (generateMocker.generateRelaxedVoidParameter && generateMocker.useMockitoGeneratedTypes) {
       error("relaxedVoid parameter cannot be generated for Mockito");
     }
   }
@@ -62,8 +58,7 @@ class MockerGenerator extends GeneratorForAnnotation<GenerateMocker> {
       }
     }
     return MocktailRelaxedVoidConfig(
-        futureVoidMethodNames: futureVoidMethods.toList(),
-        voidMethodNames: voidMethods.toList());
+        futureVoidMethodNames: futureVoidMethods.toList(), voidMethodNames: voidMethods.toList());
   }
 
   Future<MockorConfig?> createMockorConfig(
@@ -84,17 +79,14 @@ class MockerGenerator extends GeneratorForAnnotation<GenerateMocker> {
           .nonNullUniqueDartTypesOrThrow(importAliasTable,
               attributeName: "$GenerateMocktailFallbackValues.types");
       final generateMocker = GenerateMocker([],
-          generateMockitoAnnotation:
-              readParam(annotation, 'generateMockitoAnnotation').boolValue,
-          generateMockExtensions:
-              readParam(annotation, 'generateMockExtensions').boolValue,
-          useMockitoGeneratedTypes:
-              readParam(annotation, 'useMockitoGeneratedTypes').boolValue,
+          generateMockitoAnnotation: readParam(annotation, 'generateMockitoAnnotation').boolValue,
+          generateMockExtensions: readParam(annotation, 'generateMockExtensions').boolValue,
+          useMockitoGeneratedTypes: readParam(annotation, 'useMockitoGeneratedTypes').boolValue,
           generateRelaxedVoidParameter:
               readParam(annotation, 'generateRelaxedVoidParameter').boolValue,
-          generateMocktailFallbackValues: mocktailFallbackTypes != null
-              ? GenerateMocktailFallbackValues([])
-              : null);
+          generateNiceMocks: readParam(annotation, 'generateNiceMocks').boolValue,
+          generateMocktailFallbackValues:
+              mocktailFallbackTypes != null ? GenerateMocktailFallbackValues([]) : null);
       _validateGenerateMocker(generateMocker);
       final mockDefs = types
           .map((t) => MockDef(
@@ -103,10 +95,9 @@ class MockerGenerator extends GeneratorForAnnotation<GenerateMocker> {
                   : MockDefNaming.INTERNAL,
               generateExtension: generateMocker.generateMockExtensions,
               type: t,
-              mocktailRelaxedVoidConfig:
-                  generateMocker.generateRelaxedVoidParameter
-                      ? _createMocktailRelaxedVoidConfig(t, entryLib)
-                      : null))
+              mocktailRelaxedVoidConfig: generateMocker.generateRelaxedVoidParameter
+                  ? _createMocktailRelaxedVoidConfig(t, entryLib)
+                  : null))
           .toSet();
       final mocktailFallbackMockDefs = mocktailFallbackTypes
           ?.map((t) => MockDef(
@@ -117,6 +108,7 @@ class MockerGenerator extends GeneratorForAnnotation<GenerateMocker> {
           .toSet();
       return MockorConfig(
           mockerName: mockerFunction.name,
+          generateNiceMocks: generateMocker.generateNiceMocks,
           generateMockitoAnnotation: generateMocker.generateMockitoAnnotation,
           mockDefs: mockDefs,
           mocktailFallbackMockDefs: mocktailFallbackMockDefs);
@@ -130,12 +122,12 @@ class MockerGenerator extends GeneratorForAnnotation<GenerateMocker> {
 extension on DartType {
   VoidReturnType? toVoidReturnType() {
     final type = this;
-    if (type.isVoid) {
+    if (type is VoidType) {
       return VoidReturnType.Void;
     }
     if (type is InterfaceType && type.typeArguments.length == 1) {
       final typeArg = type.typeArguments.first;
-      if (typeArg.isVoid) {
+      if (typeArg is VoidType) {
         if (type.isDartAsyncFuture) {
           return VoidReturnType.FutureVoid;
         } else if (type.isDartAsyncFutureOr) {

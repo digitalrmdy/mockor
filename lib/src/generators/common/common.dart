@@ -15,8 +15,7 @@ ConstantReader readParam(ConstantReader annotation, String parameter) {
 }
 
 DartObject? readParamInsideNestedObject(ConstantReader annotation,
-    {String parameter = "generateMocktailFallbackValues",
-    required String nestedParameter}) {
+    {String parameter = "generateMocktailFallbackValues", required String nestedParameter}) {
   final reader = annotation.read(parameter);
   if (reader.isNull) {
     return null;
@@ -30,14 +29,12 @@ Future<List<ResolvedType>> readDartTypesParam(
       .listValue
       .map((x) => x.toTypeValue())
       .toList()
-      .nonNullUniqueDartTypesOrThrow(importAliasTable,
-          attributeName: "$GenerateMocker.types");
+      .nonNullUniqueDartTypesOrThrow(importAliasTable, attributeName: "$GenerateMocker.types");
 }
 
 extension NullableListExtension<T> on List<T?> {
   // ignore: unused_element
-  List<T> filterNotNull() =>
-      where((element) => element != null).cast<T>().toList();
+  List<T> filterNotNull() => where((element) => element != null).cast<T>().toList();
 }
 
 extension FutureListExtension<T> on List<Future<T>> {
@@ -46,7 +43,7 @@ extension FutureListExtension<T> on List<Future<T>> {
 }
 
 void validateDartType(DartType dartType, onError(String message)) {
-  if (dartType.isDynamic) {
+  if (dartType is DynamicType) {
     onError("cannot mock `dynamic`");
   }
   if (dartType.alias?.element != null) {
@@ -114,8 +111,8 @@ class ImportAliasTable {
 
   factory ImportAliasTable.fromElement(Element element) {
     final table = <String, String>{};
-    element.library?.imports.forEach((importElement) {
-      final prefix = importElement.prefix?.name;
+    element.library?.libraryImports.forEach((importElement) {
+      final prefix = importElement.prefix?.element.name;
       if (prefix != null) {
         final import = importElement.importedLibrary?.source.toString();
         if (import == null) {
@@ -137,8 +134,7 @@ class ImportAliasTable {
 }
 
 extension DartTypeExtension on Iterable<DartType?> {
-  Future<List<ResolvedType>> nonNullUniqueDartTypesOrThrow(
-      ImportAliasTable importAliasTable,
+  Future<List<ResolvedType>> nonNullUniqueDartTypesOrThrow(ImportAliasTable importAliasTable,
       {required String attributeName}) async {
     forEachIndexed((i, type) {
       void errorF(String msg) => error(

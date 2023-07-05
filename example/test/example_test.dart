@@ -1,11 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'example_test.mocks.dart';
+import 'package:mockito/mockito.dart';
 import 'package:mockor/mockor.dart';
 
+import 'example_test.mocks.dart';
 import 'models/model_a.dart' as ModelA;
 import 'models/model_b.dart' as ModelB;
+
 part 'example_test.mockor.dart';
 
 abstract class ExampleUseCase {
@@ -30,11 +31,10 @@ class ExampleUseCase3 {}
   ModelA.Model,
   ModelB.Model,
 ])
-T _mock<T extends Object>({bool relaxed = false}) =>
-    _$_mock<T>(relaxed: relaxed);
+T _mock<T extends Object>({bool relaxed = false}) => _$_mock<T>(relaxed: relaxed);
 void main() {
   late ExampleUseCase exampleUseCase;
-  late ExampleUseCase2 exampleUseCase2;
+  late MockExampleUseCase2 exampleUseCase2;
   // ignore: unused_local_variable
   late ModelA.Model modelA;
   // ignore: unused_local_variable
@@ -81,8 +81,7 @@ void main() {
         final ExampleUseCase2 useCase = _mock(relaxed: true);
         useCase..exampleVoid();
       });
-      test("then don't throw exception on Future<void> method not stubbed",
-          () async {
+      test("then don't throw exception on Future<void> method not stubbed", () async {
         final ExampleUseCase2 useCase = _mock(relaxed: true);
         try {
           await useCase.exampleFutureVoid();
@@ -117,8 +116,7 @@ void main() {
         }
       });
 
-      test("then don't throw exception on Future<void> method not stubbed",
-          () async {
+      test("then don't throw exception on Future<void> method not stubbed", () async {
         final ExampleUseCase2 useCase = _mock(relaxed: false);
         try {
           await useCase.exampleFutureVoid();
